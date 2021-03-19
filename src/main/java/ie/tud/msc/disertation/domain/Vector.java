@@ -1,36 +1,27 @@
-package ie.tud.msc.disertation;
+package ie.tud.msc.disertation.domain;
+
+import lombok.Data;
 
 /**
  * Can represent a position as well as a velocity.
  */
-class Vector {
+@Data
+public class Vector {
 
     private double x, y, z;
     private double limit = Double.MAX_VALUE;
 
-    Vector () {
+    public Vector () {
         this(0, 0, 0);
     }
 
-    Vector (double x, double y, double z) {
+    public Vector(double x, double y, double z) {
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    double getX () {
-        return x;
-    }
-
-    double getY () {
-        return y;
-    }
-
-    double getZ () {
-        return z;
-    }
-
-    void set (double x, double y, double z) {
+    public void set (double x, double y, double z) {
         setX(x);
         setY(y);
         setZ(z);
@@ -48,35 +39,35 @@ class Vector {
         this.z = z;
     }
 
-    void add (Vector v) {
+    public void add (Vector v) {
         x += v.x;
         y += v.y;
         z += v.z;
         limit();
     }
 
-    void sub (Vector v) {
+    public void sub (Vector v) {
         x -= v.x;
         y -= v.y;
         z -= v.z;
         limit();
     }
 
-    void mul (double s) {
+    public void mul (double s) {
         x *= s;
         y *= s;
         z *= s;
         limit();
     }
 
-    void div (double s) {
+    public void div (double s) {
         x /= s;
         y /= s;
         z /= s;
         limit();
     }
 
-    void normalize () {
+    public void normalize () {
         double m = mag();
         if (m > 0) {
             x /= m;

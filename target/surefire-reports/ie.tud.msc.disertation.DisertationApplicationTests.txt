@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: ie.tud.msc.disertation.DisertationApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.342 s - in ie.tud.msc.disertation.DisertationApplicationTests
