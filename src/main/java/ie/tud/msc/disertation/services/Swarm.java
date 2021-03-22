@@ -1,11 +1,9 @@
 package ie.tud.msc.disertation.services;
 
+import ie.tud.msc.disertation.domain.ConfigVariables;
 import ie.tud.msc.disertation.domain.Result;
-import ie.tud.msc.disertation.domain.ResultList;
 import ie.tud.msc.disertation.function.Function;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import ie.tud.msc.disertation.domain.Vector;
 
@@ -17,23 +15,17 @@ public class Swarm {
     private double cognitive;
     private double social;
 
-    public Swarm (Function function, int numberOfParticles, double inertia, double cognitive, double social) {
+    public Swarm (int numberOfParticles, ConfigVariables configVariables, Function function) {
         double infinity = Double.POSITIVE_INFINITY;
         bestPosition = new Vector(infinity, infinity, infinity);
         bestEval = Double.POSITIVE_INFINITY;
         this.particles = this.initialiseParticles(numberOfParticles, function);
-        this.inertia = inertia;
-        this.cognitive = cognitive;
-        this.social = social;
+        this.inertia = configVariables.getInertia();
+        this.cognitive = configVariables.getInertia();
+        this.social = configVariables.getSocial();
     }
 
     public Result runSwarm(int epoch) {
-        double oldEval = bestEval;
-
-        if (bestEval < oldEval) {
-            oldEval = bestEval;
-        }
-
         for (Particle particle : particles) {
             particle.updatePersonalBest();
             updateGlobalBest(particle);
