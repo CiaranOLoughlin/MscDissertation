@@ -1,0 +1,189 @@
+{
+	"info": {
+		"_postman_id": "d1c6757e-8423-4089-a29a-d12e342dca33",
+		"name": "NonDistributedCollection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "BOOTHS_FUNCTION",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"numberOfSwarms\": {{NumberOfSwarms}},\r\n    \"numberOfParticles\": {{NumberOfParticles}},\r\n    \"baseUrls\": [{{BaseUrls}}],\r\n    \"configVariables\": {\r\n        \"inertia\": 0.6,\r\n        \"cognitive\": 1.9,\r\n        \"social\": 1.6,\r\n        \"functionType\": \"BOOTHS_FUNCTION\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{http_protocol}}://{{url}}:{{port}}/swarm/runSwarm",
+					"protocol": "{{http_protocol}}",
+					"host": [
+						"{{url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"swarm",
+						"runSwarm"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "BEALE",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"numberOfSwarms\": {{NumberOfSwarms}},\r\n    \"numberOfParticles\": {{NumberOfParticles}},\r\n    \"baseUrls\": [{{BaseUrls}}],\r\n    \"configVariables\": {\r\n        \"inertia\": 0.58,\r\n        \"cognitive\": 1.9,\r\n        \"social\": 1.6,\r\n        \"functionType\": \"BEALE\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{http_protocol}}://{{url}}:{{port}}/swarm/runSwarm",
+					"protocol": "{{http_protocol}}",
+					"host": [
+						"{{url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"swarm",
+						"runSwarm"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EASOM",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"numberOfSwarms\": {{NumberOfSwarms}},\r\n    \"numberOfParticles\": {{NumberOfParticles}},\r\n    \"baseUrls\": [{{BaseUrls}}],\r\n    \"configVariables\": {\r\n        \"inertia\": 0.6,\r\n        \"cognitive\": 1.8,\r\n        \"social\": 1.6,\r\n        \"functionType\": \"EASOM\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{http_protocol}}://{{url}}:{{port}}/swarm/runSwarm",
+					"protocol": "{{http_protocol}}",
+					"host": [
+						"{{url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"swarm",
+						"runSwarm"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "THREE_HUMP_CAMEL",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"numberOfSwarms\": {{NumberOfSwarms}},\r\n    \"numberOfParticles\": {{NumberOfParticles}},\r\n    \"baseUrls\": [{{BaseUrls}}],\r\n    \"configVariables\": {\r\n        \"inertia\": 0.6,\r\n        \"cognitive\": 1.9,\r\n        \"social\": 1.6,\r\n        \"functionType\": \"THREE_HUMP_CAMEL\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{http_protocol}}://{{url}}:{{port}}/swarm/runSwarm",
+					"protocol": "{{http_protocol}}",
+					"host": [
+						"{{url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"swarm",
+						"runSwarm"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

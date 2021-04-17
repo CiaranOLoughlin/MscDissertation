@@ -1,0 +1,490 @@
+\documentclass[oneside,12pt]{book}
+
+% Package dependencies
+\usepackage{geometry}
+\usepackage{lipsum}
+\geometry{left=32mm, right=30mm, bottom=25mm, top=25mm}
+\usepackage{amsmath , amsthm , amssymb}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{apacite}
+\usepackage{scrextend}
+\usepackage{blindtext}
+\usepackage{fancyhdr}
+\usepackage{multicol}
+\usepackage{csquotes}
+\usepackage{bm}
+\usepackage{subcaption}
+\usepackage{tocbibind}
+\usepackage{pdfpages}
+\usepackage[toc,page]{appendix}
+\usepackage{wrapfig}
+\usepackage{colortbl}
+\usepackage{multirow}
+\usepackage{listings}
+
+% document formatting
+\addtokomafont{labelinglabel}{\sffamily}
+\setlength{\columnsep}{1cm}
+\renewcommand{\baselinestretch}{1.5}
+
+
+\begin{document}
+
+% Title page
+\begin{titlepage}
+    \begin{center}
+        \vspace*{1.5cm}
+        \Huge
+        \textbf{Performance comparison between a distributed particle swarm algorithm and a non distributed algorithm}
+        
+        \vspace{0.5cm}
+        \begin{figure}[H]
+    	\centering
+    	\hspace{7mm} \includegraphics[scale=0.5]{TU_logo}
+        \end{figure}
+        
+        \vspace{1.5cm}
+        
+        \textbf{Ciarán O'Loughlin}
+        
+        \vfill
+       \large
+        A dissertation submitted in partial fulfilment of the requirements of\\
+	Dublin Institute of Technology for the degree of\\
+	M.Sc. in Computing (TU060)\\
+       \vspace{0.5cm}
+        \textbf{Date}
+        \vspace{0.8cm}
+ 
+    \end{center}
+\end{titlepage}
+
+% Define headers / footer style for the whole doc
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[CE,CO]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+% APA style for referencing
+\bibliographystyle{apacite}
+
+% Roman numerals for the 'administrative' sections
+\pagenumbering{Roman}
+
+% Declaration page
+\chapter*{Declaration}
+\addcontentsline{toc}{chapter}{Declaration}
+I certify that this dissertation which I now submit for examination for the award of
+MSc in Computing (Stream), is entirely my own work and has not been taken
+from the work of others save and to the extent that such work has been cited and
+acknowledged within the text of my work.
+\\
+\\
+This dissertation was prepared according to the regulations for postgraduate study of
+the Dublin Institute of Technology and has not been submitted in whole or part for an
+award in any other Institute or University.
+\\
+\\
+The work reported on in this dissertation conforms to the principles and requirements
+of the Institute’s guidelines for ethics in research.
+\vfill
+\noindent
+\textit{\textbf{Signed:}}  \\
+
+\noindent
+\textit{\textbf{Date:}}
+\vspace{0.8cm}
+
+% Abstract
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+\par 
+
+\\
+\vfill
+\noindent
+\textbf{Keywords:} \quad Swarm Intelligence, Particle Swarm Optimisation, PSO, Distributed Algorithms
+
+%Acknowledgements
+\chapter*{Acknowledgments}
+\addcontentsline{toc}{chapter}{Acknowledgments}
+
+% Contents and lists
+\newpage
+\tableofcontents
+
+\listoffigures
+
+\listoftables
+
+\chapter*{List of Acronyms}
+\addcontentsline{toc}{chapter}{List of Acronyms}
+\begin{table}[H]
+  \centering
+    \begin{tabular}{ l l }
+    \textbf{PSO} & Particle Swarm Algorithm \\
+    \textbf{LTS} & Long Term Support \\
+    \textbf{CPU} & Computer processor unit \\
+    \textbf{RAM} & Random Access Memory \\
+    \end{tabular}
+\end{table}
+
+\newpage
+
+% Standard numbering starts from here
+\pagenumbering{arabic}
+\fancyhead[RE,LO]{\leftmark}
+\renewcommand{\headrulewidth}{2pt}
+
+
+% Start of core thesis content
+
+%Introduction chapter
+% ============================================================= %
+\chapter{Introduction}
+\section{Background}
+\par Swarm Intelligence (SI) is an innovative distributed intelligent paradigm for solving optimization problems that originally took its inspiration from the biological examples by swarming, flocking and herding phenomena in vertebrates \cite{abraham_guo_liu_2006}.
+Within the boundaries of swarm intelligence there are many different algorithms, all with different uses and capabilities. One particular algorithm is the Particle swarm optimisation algorithm(PSO). PSO is a population-based search algorithm and is initialized with a population of random solutions, called particles \cite{shi_2004}. Particles are then arranged into a "swarm". Swarms allow the sharing of information between particles, the so called "social" element of the algorithm. Particle swarm optimisation as an algorithm was first proposed by James Kennedy  and Russell Eberhart in their 1995 paper "Particle Swarm Optimization" \cite{kennedy_eberhart_1995}. While not a new technique, PSO is still being expanded upon today, with modern uses ranging from simple algorithmic evaluation, to more complex robotics implementations. 
+
+This is the basis of a single swarm PSO. We can increase the number of particles in a swarm, but we can also increase the number of swarms. A multi swarm PSO(Or a Cooperative Particle Swarm Optimisation algorithm, CPSO) model allows for "a significant increases in the solution diversity in CPSO-S algorithm, because of the many different members from different swarms" \cite{vandenbergh_engelbrecht_2004}. Even when using a multi swarm model, there will be hard limits on the number of particles and swarms a singular machine can generate. This is where a distributed model can help, with swarms being logically segregated across a network of machines.
+
+\section{Research Project/problem}
+There is an upper limit to the amount of particles any one system can support in a PSO algorithm. At a certain point the algorithm will slow down and the time taken for it to complete an iteration will drastically increase. This will be exacerbated by running multiple swarms. 
+To alleviate this problem we can distribute the swarms onto different machines, which allows us to increase the total number of swarms and particles available to us. However, this has a disadvantage as to evaluate results generated by the swarms network communications will need to be established. Network connections are inherently slower than connections and data transfers on a local machine, so the question this report aims to answers is
+
+\textit{"At what point are performance gains in running a particle swarm optimisation algorithm in a distributed environment outweighed by the time lost in network communications between multiple swarms?"}
+
+\section{Research Objectives}
+The key objective  of  the  research  is  to  identify  whether  there exists a point whereby its more efficient to run a particle swarm optimisation algorithm in a distributed manner over a non distributed manner. To answer this question the following research objectives where identified:
+\begin{enumerate}
+\item Create a distributed and non distributed implementation of the PSO
+\item Generate a result set for the non distributed implementation, with varying inputs(Example; different evaluation function, number of swarms and or particles etc.). Average out results with the same inputs
+\item Generate a result set for the distributed implementation, with varying inputs(Examples; different evaluation function, number of swarms and or particles etc.). Average out results with the same inputs
+\item Cross comparison between the two results sets. Identify points at which distributed had a faster response time, or other values that would make it preferable to  a non distributed implementation
+\item Identify any limiting factors, significant points of interest in the data and identify future research
+\end{enumerate}
+
+
+\section{Research Methodologies}
+The research can be classified based in a few different ways -
+\subsection{Based on Type: Primary vs Secondary}
+Primary research refers to a collection of original data, specific to a particular research question generated during the project. When doing primary research, the researcher gathers information first-hand rather than relying on available information in databases and other publications.\cite{bouchrika_2020}
+
+Secondary research instead focus's on collecting and summarizing existing data collections and results. This involves researching existing literature, published articles and analyzing the data produced from these articles to come to a new conclusion, or test a hypothesis. When doing secondary research, researchers use and analyze data from primary research sources.\cite{bouchrika_2020}
+
+The research type for this project can be defined as primary research. Data sets needed to answer the research question will be generated during the course of the project. The data set will be unique, as no other study has sought to compare implementation types of particle swarm optimisation algorithms. 
+\subsection{Based on Objective: Quantitative vs Qualitative}
+Quantitative research methods refer to collecting numerical data, data that can be used to measure variables, predict outcomes etc. Quantitative data is structured and statistical, using a grounded theory method that relies on data collection that is systematically analyzed. Quantitative research is a methodology that provides support when you need to draw general conclusions from your research and predict outcomes.\cite{mcleod_2019}
+
+Qualitative research is the fundamentally opposite to Quantitative research, as it relies on non-statistical and unstructured or semi-structured. It is a methodology designed to collect non-numerical data to gain insights. It relies on data collected based on a research design that answers the question “why.”\cite{survey_monkey}
+
+The research objective of this project can be defined as quantitative research. This study will generate and examine structured data sets, comparing two particle swarm optimisation implementations, and drawing conclusions from those comparisons. 
+\subsection{Based on Form: Exploratory vs Constructive vs Empirical}
+Exploratory research refers to when researching a problem which has not been clearly defined. Through exploratory research we can determine the best research design and data collection method. 
+When conducting constructive research a completely new approach, theory or model will be proposed. Constructive research adds a new contribution to the current body of research. 
+Empirical research is a way of obtaining knowledge through direct observation or experience. Empirical research involves a process, of defining a hypothesis, and then making predictions that can be tested using a suitable scientific experiment. The study can be defined as an empirical study. This study will define its hypothesis, test that hypothesis, examine the results from tests, and draw conclusions/predictions from the data. Based on that data the hypothesis can then be accepted or rejected, concluding the study.  
+
+\subsection{Based on Reasoning: Deductive vs Inductive}
+% Needs rewriting. :(
+Deductive reasoning is a basic form of valid reasoning. Deductive reasoning, or deduction, starts out with a general statement, or hypothesis, and examines the possibilities to reach a specific, logical conclusion
+Inductive reasoning is the opposite of deductive reasoning. Inductive reasoning makes broad generalizations from specific observations. Basically, there is data, then conclusions are drawn from the data. 
+
+For this study deductive reasoning will be used. The study will state a hypothesis, and attempt to validate that hypothesis testing, generating data sets and drawing conclusions from those data sets. 
+
+\section{Scope and Limitations}
+The scope of this research is to identifier potential points where a distributed implementation of the particle swarm optimisation algorithm is faster than a non-distributed implementation. 
+
+There are two main limiting factors to this research. The first being that the implementations are only tested against specific fitness functions. There are many different fitness functions that can be applied to a particle swarm optimisation algorithm, and many of them will have different efficiency points, some may gain a benefit from being distributed at different levels of swarms and particles, and others may not ever benefit from being distributed. For this reason four different algorithms where chosen and tested against the two implementations. 
+
+The second limiting factor is an environmental one. Computers with a higher amount of CPU(Computer processor unit) power and RAM(Random Access Memory) will be able to support more swarms and particles. In order to account for this the same machine type will be used across the distributed and non distributed implementations. How this will be achieved is discussed in chapter three, Design and Implementation Overview. 
+
+\section{Document Outline}
+\subsection{Chapter 1}
+\subsection{Chapter 2}
+\subsection{Chapter 3}
+\subsection{Chapter 4}
+\subsection{Chapter 5}
+
+% Literature review chapter
+% ============================================================= %
+\chapter{Background Research}
+\section{Introduction}
+This  chapter  provides  a  review of the  literature available on particle swarm optimisation algorithms, distributed implementation, various  approaches adopted  to  solve  the  problem  and  evaluation metrics used  for  evaluating  the results.  The  chapter  concludes with  the  gaps  in  the existing research and forms the objective for the research.
+\section{PSO(Particle Swarm Optimisation)}
+\subsection{What is PSO?}
+The original PSO algorithm was introduced in 1995 \cite{kennedy1995particle}, in the paper they discussed what the PSO algorithm is, and how to use it to optimise nonlinear functions. At its heart PSO is a population based optimization technique where the population is referred to as a swarm, and population members are referred to as particles. At the algorithms inception, a number of unique particles are created and given random positions within a D-dimensional space. Each particle can be considered a potential solution to the fitness function. Particles then go through iterations, or epochs, where each particle calculates its own personal best evaluation value, then the global best value is calculated. Particles are encouraged to move closer to their own personal best or the groups based on the algorithms implementation. A particle moving closer towards the groups best will define a higher "social value", and moving closer to its own personal best will define a higher "cognitive value". Velocity can also be changed to reduce the variance in particle positions between iterations, also know as epochs. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.6]{Images/PSO_Flow.png}
+    \caption{Flow Diagram of Particle Swarm Optimisation Algorithm \cite{wang_tan_liu_2017} }
+    \label{fig:Flow Diagram of Particle Swarm Optimisation Algorithm}
+\end{figure}
+
+We can see from the above explanation that PSO shares many elements of other artificial intelligence types, such as evolutionary computation, and genetic algorithms. The particles are manipulated according to the following equations: 
+\begin{equation}
+V_{id} = W * V_{id} + C_l * Rand( ) * ( P_{id} - X_{id} ) + C_2 * Rand( ) * (P_{gd} - X_{id})
+\end{equation}
+\begin{equation}
+X_{id} = X_{id} + V_{id}
+\end{equation}
+Where Cl and c2 are two positive constants, Rand() is a random function in the range [0,1], and w is the inertia weight \cite{shi1998parameter}. A particle's new velocity can be calculated using equation 2.1, using its previous velocity and the distances of its current position from its own best experience (position) and the group's best experience. Equation 2.2 calculates the particles new position after its updated velocity. 
+
+\subsubsection{Fitness Function}
+When talking about PSO we must also talk about a fitness function. A fitness function is a function that maps the values in your particles to a real value that must reward those particle that are close to your optimisation criterion. Essentially this is the optimisation function you wish to find the minimum value. For instance if we wished to find the global minimum of the Beale Function, and optimisation test function we could use PSO. Beale function can be defined as:
+\begin{equation}
+f(x, y) = (1.5-x+xy)^2+(2.25-x+xy^2)^2+(2.625-x+xy^3)^2
+\end{equation}
+Using this fitness function we could find the global minimum, in this case it would equate out to be $f(x∗)=0$ at $x∗=(3,0.5)$ \cite{bingham}. Its important to note that as PSO is a heuristic algorithm, its solution results are not necessarily optimal. PSO will find an answer to a fitness function, but it may not be the best answer to the function. In addition, some problems may have multiple global minimum values, in which case the PSO can only find one answer at a time. 
+
+\subsubsection{Parameter Selection}
+
+\section{PSO Implementations}
+Since James Kennedy and Russell Eberhart original paper there has been significant research into the original algorithm \cite{piotrowski_napiorkowski_piotrowska_2020, bai_2010, imrantextordfeminine2013overview, wang_tan_liu_2017} its applications \cite{hereford_2006, beni_2005, blum_li, raquel2005effective} and its performance \cite{yin_yu_wang_wang_2006, kennedy_1999}. There is also a large body of research into the use of swarm algorithms in distributed environments \cite{akat_gazi_2008, salza_ferrucci_2019, peleg_2005} and non-distributed environments \cite{trelea_2003, xie2003overview, poli2007particle}, which will be discussed more in the following section. PSO has also been improved upon, with some newer implementations updating the topology or some other underlying principle of the algorithm, examples including SPSO, APSO, TRIBES, Cyber Swarm etc \cite{zhou2009gpu, oca_stutzle_birattari_dorigo_2009, cooren2009performance, yin2010cyber}.
+
+In terms of implementing PSO there have been multiple studies into the uses of swarm intelligence in robotics system \cite{sa_nedjah_mourelle_2016, meng_gan_2008, hereford_2006}. Some other studies also look at interesting use cases PSO and swarm intelligence can be applied to, such as scheduling systems and analysis of distributed systems \cite{li_yang_su_lu_yu_2019, moradi_fotuhi-firuzabad_2008, nouiri_bekrar_jemai_niar_ammari_2015, sahin2007fault}. 
+\subsection{Topology adjustments}
+Since its original inception, several adjustments have been proposed in literature to alter some implementation detail around PSO. One reaccuring change is a change to the population topology or sociometry. It is well established that these factors play an important role in improving the performance of population-based optimization algorithms by enhancing population diversity when solving multiobjective and multimodal problems \cite{LYNN201824}. Global version PSO (GPSO) and local version PSO (LPSO) are two common neighbor topologies. 
+\subsubsection{G-PSO}
+In  the  gbest  population,  the trajectory  of  each  particle’s  search  is  influenced  by  the best point found by any member of the entire population\cite{kennedy2002population}. What this means is that the particle uses its experience (the best position achieved so far), and uses the knowledge of the best particle in the swarm to influence its movement strategy. It prioritises the global best value when updating its position.  However, the drawback of this approach is that if the best particles is far  from global optimum, the  swarm can  be  trapped in  local optima since the swarm cannot explore other areas in the search space \cite{azab_hady_hefny_2016}
+
+\subsubsection{L-PSO}
+The  lbest  population  allows  each  individual  to  be  influenced  by  some  smaller  number  of  adjacent  members  of the  population  array. Typically  lbest  neighborhoods comprise exactly two neighbors, one on each side: a ring lattice.\cite{kennedy2002population}. The same update function is used by particles in the two topologies, however lbest is generally considered to be the slower topology. Its advantage though is that it's much less likely to get stuck in the local optima, and therefore finds the target value more frequently. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=1.0]{Images/NeighborhoodTopology.png}
+    \caption{GBest(Left) and LBest(Right) sociometric patterns. \cite{kennedy2002population} }
+    \label{fig:GBest(Left) and LBest(Right) sociometric patterns.}
+\end{figure}
+
+\subsection{Multi Swarm PSO}
+As mentioned previously there has been a wide body of research conducted into variants of the original PSO algorithm. One such area has been in using multiple swarms, with researches finding some success with their implementations. One such implementation is the MSPSO(multi-swarm particle swarm optimization).  MSPO "\textit{is based on multiple swarms framework cooperating with the dynamic sub-swarm number strategy (DNS), sub-swarm regrouping strategy (SRS), and purposeful detecting strategy (PDS)}" \cite{XIA2018126}. Using these strategies allows MSPSO to balance its exploration and the exploitation ability, resulting in good performance, in terms of solutions accuracy. It however does suffer from an increased time complexity when compared to several other PSO implementations. 
+IPSO(Improved  particle  swarm  optimization   algorithm) is another mutli swarm technique that "\textit{adopts   a   new   mutation  operator  and  a  new  method  that  congregates  some  neighboring  individuals  to  form  multiple  sub-populations  in  order  to  lead  particles  to  explore  new  search space}" \cite{zheng2007improved}. Subdividing out the population into multiple neighborhoods, or swarms allows the algorithm to divide up the problem space, and thereby improve performance. Utilising the mutation factor also allowed the implementation to "\textit{enhance the efficiency of advantageous direction of flying particles, so particles can fly to feasible region more quickly and more efficiently}".
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=1.0]{Images/IpsoFormingSwarms.png}
+    \caption{IPSO multi-populations being formed . \cite{zheng2007improved} }
+    \label{fig:IPSO multi-populations being formed.}
+\end{figure}
+
+\subsection{Distributed PSO}
+\subsubsection{dPSO}
+As mentioned in chapter one, there will be a limit to the number of particles and swarms any one computer can support, the limiting factor being the amount of memory or computational power. To avoid this bottle neck there has been a significant body of research into creating a distributed implementation of the PSO algorithm.  One such area of research is in robotics, using PSO as a search algorithm distributed across many particles, in reality acting as particles in the PSO. In James M. Hereford paper, "\textit{A Distributed Particle Swarm Optimization Algorithm for Swarm Robotic Applications}" a distributed PSO algorithm is proposed, which he calls the dPSO \cite{hereford_2006}. Listing 2.1 shows the pseudo code used to implement the algorithm. 
+
+\begin{lstlisting}[language=inform, caption=Herefords dPSO Code Flow]
+pbest = -1; gbest = -1; % Initialize pbest and gbest 
+While (target not found or time not expired) 
+	% Make measurement and update, if necessary 
+    meas = make_measurement();  
+    if (meas > pbest) % Update pbest, if true
+    	Up_pbest(); %Update pbest value and location
+        if (meas > gbest) % Update gbest, if true
+        	Set gflag; % set a flag 
+            Up_gbest(); %Update gbest value and location
+        end 
+     end 
+     Move(); % Move bot based on PSO update equation  
+     % For simulation, constrain bot movement 
+     % Two conditions: 
+     %   (1) Magnitude of velocity must be < Vmax 
+     %   (2) Direction must be within in max turn angle
+     If (new gbest found) %broadcast new gbest value       
+     	Broadcast(gbest);  
+     end
+     If (gbest is global gbest) %broadcast gbest location      
+     	Broadcast(gbest_location);  
+     end
+  End while
+\end{lstlisting}
+
+In the paper Hereford designed the algorithm for robotic operators, using search algorithms to find specific targets within a search space. From the pseudo code we can see that once a new global best has been found by an operator, that best value is broadcast to all particles in the swarm. 
+This creates a truly distributed model, with no reliance on a central operator to process the results of all the particles. Particles must maintain an active list of all particles in the swarm, in order to broadcast the new global best value. So if a new particle(robot) is added to the swarm, all particles must be updated to be made aware of that new particle. 
+In his results he found a good deal of success, with the robots finding there target 99\% of the time. Additionally he found that as you increase the number of particles in the swarm the time to find the solution considerably reduces. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.9]{Images/HerefordResults.png}
+    \caption{dPSO Time to find Target \cite{hereford_2006} }
+    \label{fig:dPSO Time to find Target}
+\end{figure}
+
+\subsubsection{AGLDPSO}
+In Wang et als. paper "Adaptive Granularity Learning Distributed Particle Swarm Optimization for Large-Scale Optimization" a distributed implementation is proposed, called AGLDPSO(Adaptive granularity learning distributed particle swarmoptimization) \cite{wang2020adaptive}. AGLDPSO uses a master-slave relationship when creating distributed particles, which is significantly different to Herefords distributed model, whereby all particles where peers within a swarm, there was no orchestration or master controller. Each particle, or robot was aware of all other robots in the swarm and updated accordingly. In AGLDPSO, a master acts as the intermediary and updates all particles in the population. This works very well for their implementation, but creates a network bottle neck that dSPO altogether avoids. When tested against multiple other optimisation algorithms the authors found that AGLDPSO "\textit{achieves a promising and satisfying performance when solving the large-scale optimization problems.}". 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.8]{Images/AGLDPSO.png}
+    \caption{Flow Diagram of AGLDSPO \cite{wang2020adaptive} }
+    \label{fig:Flow Diagram of AGLDSPO}
+\end{figure}
+
+\section{Evaluating performance}
+\subsection{Benchmarking}
+Benchmarking, also referred to as "best practice benchmarking" or "process benchmarking", is  a  method  of  conducting  necessary  actions  and  activities  in  order  to evaluate  how  a  given  piece  of  software  or  a  system  is  going  to perform  once  it  is deployed and used in the field \cite{vokolos1998performance}. When speaking of software performance we general refer to throughput, stimulus, response time, or some combination of the two\cite{vokolos1998performance}.  It is also a way of assessing the system’s availability. Meaning that whenever the system undergoes high levels of stress, be it increasing the number of processed requests (throughput), or high resource consumption (machine resources), the system still processes these requests or events in acceptable numbers\cite{vokolos1998performance}.  Usually benchmarking involves predicting how a technology will behave once its used in regular every day life, for instance benchmarking a web server will allow organisations to predict how well it will cope with increased web traffic. The predictions allow organisation to anticipate potential limitations, and can lead the organisation to a plan to overcome those limitations. 
+
+\subsection{Evaluating PSO performance}
+ In literature PSO is often benchmarked against other variants of PSO,the original implementation of PSO, or some other optimisation algorithm. For example in the literature around AGLDPSO, it was bench marked against  the following algorithms; CCPSO2, SL-PSO, CSO, DMS-L-PSO, DSPLSO, DLLSO, DECC-DG, DECC-G, and MLCC \cite{wang2020adaptive}, half of which are PSO implementations. 
+\section{Research Gaps}
+As outlined above there has been a large amount of research in the area of Swarm intelligence over the past 20 years. We can see in J. F. Schutte et. al article they had a comprehensive cover of using parallel PSO \cite{schutte2004parallel}, however to limit network connection time the used a parallel processor for running the algorithm. This would certainly cut down on networking connection times, however it cant be described as truly a distributed algorithm. S. Burak Akat and Veysel Gazi focused much more on the distributed aspect of the algorithm, but no effort was made at running comparisons between the distributed version and a non distributed version of the algorithm \cite{akat_gazi_2008}. James M. Hereford again focused on the distributed aspect of the algorithm, with no relative benchmarks comparing it to a non distributed version. \cite{hereford_2006}
+
+The gap identified for this article is the performance benefits of running a PSO algorithm in distributed environments vs non-distributed environments. As you can see above there has been plenty of research into crafting and testing distributed implementations of the PSO algorithm, but as far as I can find in my research there has been no comparison done of testing the PSO algorithm in distributed environments vs non-distributed environments and comparing the results.
+
+\subsection{Research Question}
+
+\section{Conclusion}
+
+
+% Design and methodology chapter
+% ============================================================= %
+\chapter{Experiment design and methodology}
+\section{Introduction}
+\section{Aim of Research}
+\section{Design and Implementation overview}
+To start with then will be the implementation tasks. Firstly a PSO algorithm will need to be created using a simple fitness function. <<Fitness function choice and description>>. The PSO algorithm will then need to be adapted to run both synchronously and asynchronously on command.
+<<https://github.com/witek1902/pso-algorithm>>
+
+\subsection{Fitness Function overviews}
+
+\subsection{Non-Distributed Implementation}
+To start with will be the non-distributed implementation. The basic flow of the system will follow diagram 3.1. The algorithm will be run on a single machine, it will initialise and create a pre-selected number of swarms, each with a pre-selected number of particles. At this point the first iteration will begin for all swarms. The iteration will follow the same format as what was discussed in section 2.2.1. Each swarm will attempt to find its group best value. All swarms will then report the group best value. At this point the controller class, which will also be the class that instantiates the swarms, will try and calculate if a "settled" group best value has been found. What this means is that at a certain point the algorithm will settle on a particular value, the local minimum. This will be the optimum solution to the fitness function. When we say settle, we mean for a certain number of rounds the same group best value will be returned. So the system will need to record past values and compare against returned values to see if the same value has been returned for multiple iterations in a row. When this has occurred the domain controller will calculate the time to arriving at this optimal solution, and the number of iterations it took to find that value. Seeing as this algorithm has a degree of randomness to it this will need to be repeated many times and values will need to be averaged out across all runs. 
+The basic flow of the non-distributed implementation is shown below. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.25]{Images/FlowDiagramNonDistibutedPSO.png}
+    \caption{Flow Diagram of Non Distributed Particle Swarm Algorithm}
+    \label{fig:Flow Diagram of Non Distributed Particle Swarm Algorithm}
+\end{figure}
+
+\subsection{Distributed Implementation}
+In allot of ways the distributed implementation will function similarly to the non distributed implementation. The only functional difference will be that swarms will be logically separated across multiple machines. Where the non distributed implementation will be running a domain controller, and all swarm instances, the distributed implementation will feature a domain controller sitting on a single machine, calling out to other networked machines that will startup individual swarms with pre-programmed number of particles. Once an iteration ends the machine will communicate back to the domain controller, which will collect response from all active swarms, and check to see if the swarms have "settled" on the predefined optimum value. 
+If they have the domain should shut down the networked machines, gather the same values, ie. number of iterations, time to solution, but additionally for the distributed implementation we will be recording some additional figures, such as data exchanges in kbs, and network communication time. To do this we will setup a stopwatch like timer that starts when a request is sent to one of the network machines, and end the stopwatch when we receive a communication back. We can see an overview of how this system should work in figure 3.2.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.25]{Images/FlowDiagramDistibutedPSO.png}
+    \caption{Flow Diagram of Distributed Particle Swarm Algorithm}
+    \label{fig:Flow Diagram of Distributed Particle Swarm Algorithm}
+\end{figure}
+
+\section{Technology Research}
+% Language choice, frameworks etc.
+\subsection{Implementation Language}
+For the purpose of this study java will be used as the implementation language. Java was chosen due to the "deploy anywhere" model that allows for applications to be run on any operating system that supports a JVM(Java Virtual Machine). This will be a large benefit when the application is deployed to a distributed environment. Other advantages of using Java are its quite performant, has a large set of supported libraries and extensions, along with a very active community and a wide range of supporting tools and documentation. 
+Java is a mature language, with its initial 1.0 release in 1995. Since then its gone through multiple iterations and major version changes. It has been largely adopted by  large enterprise organisations due to its stability and feature rich ecosystem. Java's most recently released LTS(Long term support) version is Java 11, which will be in support till 2026. Later versions have been released, Java 15 having been released in September 2020,  but as of now Java 11 is the LTS version to use. 
+
+\subsection{Distributed environment choice}
+For this project a distributed environment needed to be chosen, for both the distributed an non-distributed algorithm implementations. To deal with this I decided to use a containerised solution, one that would allow the deployment of java applications, and could facilitate the network communications between the instances. A number of different options where considered, including AWS(Amazon Web Services) EC2 instances, google cloud compute and Digital Oceans Droplets. All of these providers provided similar yet subtlety different products. Each had a virtual machine provider that allowed the deployment of java applications, along with unique domain names and other internet connection utilities. 
+\subsubsection{AWS Vs Google Vs Digital Ocean}
+
+\subsubsection{DigitalOcean}
+DigitalOcean is a cloud computing vendor that offers an Infrastructure as a Service (IaaS) platform for software developers. It has a simple set-up and very affordable in price. It allows developers to accomplish a task like spinning up a container(droplet) in a simple, quick and intuitive manner. To deploy DigitalOcean's Infrastructure as a Service (IaaS) environment, developers launch a private virtual machine (VM) instance, which DigitalOcean calls a "droplet." Developers choose the droplet's size, which geographical region and data center it will run in, and which Linux operating system it will use: Ubuntu, CentOS, Debian, Fedora, CoreOS or FreeBSD. 
+Developers use the DigitalOcean manage and monitor their droplets with a control panel and an open source API. The control panel allows developers to scale and rebuild droplets based on workload changes and perform backups and redirect network traffic between droplets. A feature called Team Accounts is available to establish resource-sharing between different DigitalOcean users.
+Digital ocean is a very affordable option among the cloud services providers, with basic containers costing at minimum 0.00744\$ an hour, working out at 5\$ a month. For that price you get a container with 1GB of RAM, 1 core CPU and 20GB's of storage.  
+
+\subsection{Container and Network Design}
+For this project we will be using a relatively straightforward container design. As mentioned in the previous section the distributed provider used for this project will be digital ocean. Within their ecosystem they define virtual environments as "droplets". Within this system our domain controller will be sitting on one droplet, and all subsequent droplets containing slave nodes running swarm instances. This design can be seen in figure 3.3. Slave swarm nodes will be configured with the domain name and port of the domain controller, which will allow them to call back to the domain controller at the end of each iteration. Slaves will not have knowledge of any other slave node, which will save on the network design complexity. The domain controller will know the network address's and ports of each slave. The domain controller will need these to issue a start/stop commands to slaves. 
+This configuration lends itself to being easier to setup and configure, but it has one flaw. The domain controller becomes 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.25]{Images/ContainerDesign.png}
+    \caption{Container Design Overview}
+    \label{fig:Container Design Overview}
+\end{figure}
+
+\subsection{Data output design}
+For the purpose of this project we will be recording the following variables for comparison. 
+\begin{table}[H]
+  \centering
+    \begin{tabular}{| c | c | c |}
+    \hline
+     & \textbf{Variable Description} & \textbf{Data Type} \\ \hline
+    \textbf{Time} & Time Taken to get to solution & String \\ \hline
+    \textbf{N-Particles} & Number of active Particles  & Integer \\ \hline
+    \textbf{N-Swarm} & Number of active Swarms. & Integer \\ \hline
+    \textbf{Environment-Type} & Distributed or Non-Distributed & String \\ \hline
+    \textbf{Generations} & Number of generations in any particular run & Integer \\ \hline
+    \end{tabular}
+  \caption{Data output variables}
+  \label{tab:data_output_design}
+\end{table}
+As this project has a distributed network element, I decided to use json as my data ouput message type. An Example of the response can be seen below. This gives the overall response values, Environment, Time, Number of Particles total, the total number of swarms, total number of generations taken, and then a further breakdown, which gives more information on response values from each iteration. This response format will be the exact same for both distributed and non distributed formats. Using json allows me to easily create a uniform input/output requests between both implementation types, which will greatly simplify the coding process. 
+\begin{lstlisting}
+{
+	"Environment" : "NonDistributed",
+	"Time": "23400",
+	"NParticles": 100,
+	"NSwarms": 3,
+	"Generations":600,
+	"resultsBreakdown" :[
+		{
+			"Iteration":1,
+			"SwarmGBest": 0.8,
+			"timeTaken":300,
+			"SwarmBreakdown": [{
+				"SwarmId":1,
+				"NumberOfParticles":300,
+				"gBest": 0.7,
+				"machineIp":"192.168.0.1"
+			},{
+				"SwarmId":2,
+				"NumberOfParticles":300,
+				"gBest": 0.9
+				"machineIp":"192.168.0.1"
+			}]
+		}
+	]
+}
+\end{lstlisting}
+
+\section{Data Design and Data Capture Overview}
+\subsubsection{}
+
+\section{Qualitative Methods Overview}
+\section{Design Summary}
+
+
+% Results, evaluation and discussion chapter 
+% ============================================================= %
+\chapter{Results, evaluation and discussion}
+\section{Implementation Details}
+
+\subsection{Non-Distributed implementation}
+
+\subsection{Distributed implementation}
+
+\section{Results}
+
+\subsection{Non-distributed results}
+
+\subsection{Distributed results}
+
+\section{Performance comparison}
+
+\section{Network and other environment variations and impact}
+
+\section{Conclusions}
+
+\subsection{Metrics}
+
+
+
+% Concluding chapter
+% ============================================================= %
+\chapter{Conclusion}
+\section{Research Overview}
+\section{Problem Definition}
+\section{Design/Experimentation, Evaluation \& Results}
+\section{Contributions and impact}
+\section{Future Work \& recommendations}
+
+
+% End of thesis content
+% ============================================================= %
+
+% Include the bibligraphy by referencing the correct .bib file
+\bibliography{main_bibliography}
+
+% Optional appendices
+\appendix
+\chapter{Additional content}
+
+\end{document}
