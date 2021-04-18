@@ -1,1 +1,0 @@
-Test harness results will be generated here.

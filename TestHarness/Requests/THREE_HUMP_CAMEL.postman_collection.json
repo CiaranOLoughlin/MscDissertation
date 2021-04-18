@@ -1,0 +1,69 @@
+{
+	"info": {
+		"_postman_id": "29ef2684-3b80-46bd-a42d-36bf623cef81",
+		"name": "THREE_HUMP_CAMEL",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "THREE_HUMP_CAMEL",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"numberOfSwarms\": {{NumberOfSwarms}},\r\n    \"numberOfParticles\": {{NumberOfParticles}},\r\n    \"baseUrls\": [{{BaseUrls}}],\r\n    \"configVariables\": {\r\n        \"inertia\": 0.6,\r\n        \"cognitive\": 1.9,\r\n        \"social\": 1.6,\r\n        \"functionType\": \"THREE_HUMP_CAMEL\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{http_protocol}}://{{url}}:{{port}}/swarm/{{endpoint}}",
+					"protocol": "{{http_protocol}}",
+					"host": [
+						"{{url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"swarm",
+						"{{endpoint}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
