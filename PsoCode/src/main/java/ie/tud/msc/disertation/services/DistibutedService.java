@@ -127,6 +127,6 @@ public class DistibutedService {
 
 
     public Result runSwarmIteration(int stepCount) {
-        return utils.runSwarmIteration(initialisedSwarm, stepCount);
+        return utils.runSwarmIteration(initialisedSwarm, stepCount, Double.POSITIVE_INFINITY);
     }
 }

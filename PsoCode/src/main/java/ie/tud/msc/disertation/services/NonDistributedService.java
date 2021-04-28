@@ -34,11 +34,18 @@ public class NonDistributedService {
         }
 
         while(killSwitch) {
+            double globalNeibhourhoodBest = Double.POSITIVE_INFINITY;
             double[] bestEvaluation = new double[request.getNumberOfSwarms()];
             for(int swarmId = 0; swarmId<request.getNumberOfSwarms(); swarmId++) {
-                Result result = utils.runSwarmIteration(multiSwarm.get(swarmId), stepCount);
+                Result result = utils.runSwarmIteration(multiSwarm.get(swarmId), stepCount, globalNeibhourhoodBest);
                 multiSwarmResults.get(swarmId).getResults().add(result);
                 bestEvaluation[swarmId] = result.getBest();
+            }
+
+            for(int evalId = 0; evalId<request.getNumberOfSwarms(); evalId++){
+                if(bestEvaluation[evalId] < globalNeibhourhoodBest) {
+                    globalNeibhourhoodBest = bestEvaluation[evalId];
+                }
             }
 
             for(int swarmId = 0; swarmId<request.getNumberOfSwarms(); swarmId++) {

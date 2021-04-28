@@ -75,7 +75,7 @@ public class Utils {
         return new Swarm(numberOfParticles, configVariables, function);
     }
 
-    public static Result runSwarmIteration(Swarm swarm, int stepCount) {
-        return swarm.runSwarm(stepCount);
+    public static Result runSwarmIteration(Swarm swarm, int stepCount, double globalNeighbourhoodBest) {
+        return swarm.runSwarm(stepCount, globalNeighbourhoodBest);
     }
 }

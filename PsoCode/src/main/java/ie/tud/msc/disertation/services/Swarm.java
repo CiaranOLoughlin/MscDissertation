@@ -25,7 +25,8 @@ public class Swarm {
         this.social = configVariables.getSocial();
     }
 
-    public Result runSwarm(int epoch) {
+    public Result runSwarm(int epoch, double globalNeighbourhoodBest) {
+        this.bestEval = globalNeighbourhoodBest;
         for (Particle particle : particles) {
             particle.updatePersonalBest();
             updateGlobalBest(particle);
