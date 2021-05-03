@@ -101,7 +101,6 @@ of the Institute’s guidelines for ethics in research.
 \addcontentsline{toc}{chapter}{Abstract}
 \par 
 
-\\
 \vfill
 \noindent
 \textbf{Keywords:} \quad Swarm Intelligence, Particle Swarm Optimisation, PSO, Distributed Algorithms
@@ -193,18 +192,24 @@ Inductive reasoning is the opposite of deductive reasoning. Inductive reasoning 
 For this study deductive reasoning will be used. The study will state a hypothesis, and attempt to validate that hypothesis testing, generating data sets and drawing conclusions from those data sets. 
 
 \section{Scope and Limitations}
-The scope of this research is to identifier potential points where a distributed implementation of the particle swarm optimisation algorithm is faster than a non-distributed implementation. 
+The scope of this research is to identifier potential points where a distributed implementation of the particle swarm optimisation algorithm is faster than a centralised implementation. 
 
 There are two main limiting factors to this research. The first being that the implementations are only tested against specific fitness functions. There are many different fitness functions that can be applied to a particle swarm optimisation algorithm, and many of them will have different efficiency points, some may gain a benefit from being distributed at different levels of swarms and particles, and others may not ever benefit from being distributed. For this reason four different algorithms where chosen and tested against the two implementations. 
 
 The second limiting factor is an environmental one. Computers with a higher amount of CPU(Computer processor unit) power and RAM(Random Access Memory) will be able to support more swarms and particles. In order to account for this the same machine type will be used across the distributed and non distributed implementations. How this will be achieved is discussed in chapter three, Design and Implementation Overview. 
 
 \section{Document Outline}
+%Needs Rewritting, just place holder
 \subsection{Chapter 1}
+Chapter 1 is a short introduction and few reasons why this research was conducted.
 \subsection{Chapter 2}
+Chapter 2 involves a comprehensive literature review, including existing, similar approaches  to  solving the discussed issue using both architectural paradigms. Some gaps in the existing research  are discussed
 \subsection{Chapter 3}
+Chapter 3 includes a detailed design of the experiment as well as the methodology behind it.The execution of performance tests is also discussed.
 \subsection{Chapter 4}
+Chapter 4 contains some of the implementation details related to the performed benchmark. It also contains an valuation and discussion of gathered metrics and compiled results including plenty of metric graphs
 \subsection{Chapter 5}
+Chapter 5 is a final discussion and conclusion of the research project, including future suggestions on the given problem as well as recommendations regarding accuracy of the experiment and its design
 
 % Literature review chapter
 % ============================================================= %
@@ -217,7 +222,7 @@ The original PSO algorithm was introduced in 1995 \cite{kennedy1995particle}, in
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.6]{Images/PSO_Flow.png}
-    \caption{Flow Diagram of Particle Swarm Optimisation Algorithm \cite{wang_tan_liu_2017} }
+    \caption{Flow Diagram of Particle Swarm Optimisation Algorithm \protect\cite{wang_tan_liu_2017}}
     \label{fig:Flow Diagram of Particle Swarm Optimisation Algorithm}
 \end{figure}
 
@@ -235,14 +240,19 @@ When talking about PSO we must also talk about a fitness function. A fitness fun
 \begin{equation}
 f(x, y) = (1.5-x+xy)^2+(2.25-x+xy^2)^2+(2.625-x+xy^3)^2
 \end{equation}
-Using this fitness function we could find the global minimum, in this case it would equate out to be $f(x∗)=0$ at $x∗=(3,0.5)$ \cite{bingham}. Its important to note that as PSO is a heuristic algorithm, its solution results are not necessarily optimal. PSO will find an answer to a fitness function, but it may not be the best answer to the function. In addition, some problems may have multiple global minimum values, in which case the PSO can only find one answer at a time. 
+Using this fitness function we could find the global minimum, in this case it would equate out to be $f(x*)=0$ at $x*=(3,0.5)$ \cite{bingham}. Its important to note that as PSO is a heuristic algorithm, its solution results are not necessarily optimal. PSO will find an answer to a fitness function, but it may not be the best answer to the function. In addition, some problems may have multiple global minimum values, in which case the PSO can only find one answer at a time.
 
-\subsubsection{Parameter Selection}
 
 \section{PSO Implementations}
-Since James Kennedy and Russell Eberhart original paper there has been significant research into the original algorithm \cite{piotrowski_napiorkowski_piotrowska_2020, bai_2010, imrantextordfeminine2013overview, wang_tan_liu_2017} its applications \cite{hereford_2006, beni_2005, blum_li, raquel2005effective} and its performance \cite{yin_yu_wang_wang_2006, kennedy_1999}. There is also a large body of research into the use of swarm algorithms in distributed environments \cite{akat_gazi_2008, salza_ferrucci_2019, peleg_2005} and non-distributed environments \cite{trelea_2003, xie2003overview, poli2007particle}, which will be discussed more in the following section. PSO has also been improved upon, with some newer implementations updating the topology or some other underlying principle of the algorithm, examples including SPSO, APSO, TRIBES, Cyber Swarm etc \cite{zhou2009gpu, oca_stutzle_birattari_dorigo_2009, cooren2009performance, yin2010cyber}.
+Since James Kennedy and Russell Eberhart original paper there has been significant research into the original algorithm \cite{piotrowski_napiorkowski_piotrowska_2020, bai_2010, imrantextordfeminine2013overview, wang_tan_liu_2017} its applications \cite{hereford_2006, beni_2005, blum_li, raquel2005effective} and its performance \cite{yin_yu_wang_wang_2006, kennedy_1999}. There is also a large body of research into the use of swarm algorithms in distributed environments \cite{akat_gazi_2008, salza_ferrucci_2019, peleg_2005} and centralised environments \cite{trelea_2003, xie2003overview, poli2007particle}, which will be discussed more in the following section. PSO has also been improved upon, with some newer implementations updating the topology or some other underlying principle of the algorithm, examples including SPSO, APSO, TRIBES, Cyber Swarm etc \cite{zhou2009gpu, oca_stutzle_birattari_dorigo_2009, cooren2009performance, yin2010cyber}.
 
 In terms of implementing PSO there have been multiple studies into the uses of swarm intelligence in robotics system \cite{sa_nedjah_mourelle_2016, meng_gan_2008, hereford_2006}. Some other studies also look at interesting use cases PSO and swarm intelligence can be applied to, such as scheduling systems and analysis of distributed systems \cite{li_yang_su_lu_yu_2019, moradi_fotuhi-firuzabad_2008, nouiri_bekrar_jemai_niar_ammari_2015, sahin2007fault}. 
+
+\subsection{Stopping Criteria}
+
+\subsection{Parameter Selection}
+As mentioned in earlier sections, there are multiple input parameters for any pso algorithm, the basic ones being inertia, cognitive and social weightings. Parameters are usually tuned for individual optimisation functions, but there are some basic selecting parameters that are normally used. 
+
 \subsection{Topology adjustments}
 Since its original inception, several adjustments have been proposed in literature to alter some implementation detail around PSO. One reaccuring change is a change to the population topology or sociometry. It is well established that these factors play an important role in improving the performance of population-based optimization algorithms by enhancing population diversity when solving multiobjective and multimodal problems \cite{LYNN201824}. Global version PSO (GPSO) and local version PSO (LPSO) are two common neighbor topologies. 
 \subsubsection{G-PSO}
@@ -254,7 +264,7 @@ The  lbest  population  allows  each  individual  to  be  influenced  by  some  
 \begin{figure}[H]
     \centering
     \includegraphics[scale=1.0]{Images/NeighborhoodTopology.png}
-    \caption{GBest(Left) and LBest(Right) sociometric patterns. \cite{kennedy2002population} }
+    \caption{GBest(Left) and LBest(Right) sociometric patterns.\protect\cite{kennedy2002population}}
     \label{fig:GBest(Left) and LBest(Right) sociometric patterns.}
 \end{figure}
 
@@ -264,7 +274,7 @@ IPSO(Improved  particle  swarm  optimization   algorithm) is another mutli swarm
 \begin{figure}[H]
     \centering
     \includegraphics[scale=1.0]{Images/IpsoFormingSwarms.png}
-    \caption{IPSO multi-populations being formed . \cite{zheng2007improved} }
+    \caption{IPSO multi-populations being formed .\protect\cite{zheng2007improved} }
     \label{fig:IPSO multi-populations being formed.}
 \end{figure}
 
@@ -304,7 +314,7 @@ In his results he found a good deal of success, with the robots finding there ta
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.9]{Images/HerefordResults.png}
-    \caption{dPSO Time to find Target \cite{hereford_2006} }
+    \caption{dPSO Time to find Target \protect\cite{hereford_2006} }
     \label{fig:dPSO Time to find Target}
 \end{figure}
 
@@ -313,7 +323,7 @@ In Wang et als. paper "Adaptive Granularity Learning Distributed Particle Swarm 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.8]{Images/AGLDPSO.png}
-    \caption{Flow Diagram of AGLDSPO \cite{wang2020adaptive} }
+    \caption{Flow Diagram of AGLDSPO \protect\cite{wang2020adaptive} }
     \label{fig:Flow Diagram of AGLDSPO}
 \end{figure}
 
@@ -323,12 +333,14 @@ Benchmarking, also referred to as "best practice benchmarking" or "process bench
 
 \subsection{Evaluating PSO performance}
  In literature PSO is often benchmarked against other variants of PSO,the original implementation of PSO, or some other optimisation algorithm. For example in the literature around AGLDPSO, it was bench marked against  the following algorithms; CCPSO2, SL-PSO, CSO, DMS-L-PSO, DSPLSO, DLLSO, DECC-DG, DECC-G, and MLCC \cite{wang2020adaptive}, half of which are PSO implementations. 
+ % Need to finish this off. 
+ 
+ 
 \section{Research Gaps}
 As outlined above there has been a large amount of research in the area of Swarm intelligence over the past 20 years. We can see in J. F. Schutte et. al article they had a comprehensive cover of using parallel PSO \cite{schutte2004parallel}, however to limit network connection time the used a parallel processor for running the algorithm. This would certainly cut down on networking connection times, however it cant be described as truly a distributed algorithm. S. Burak Akat and Veysel Gazi focused much more on the distributed aspect of the algorithm, but no effort was made at running comparisons between the distributed version and a non distributed version of the algorithm \cite{akat_gazi_2008}. James M. Hereford again focused on the distributed aspect of the algorithm, with no relative benchmarks comparing it to a non distributed version. \cite{hereford_2006}
 
-The gap identified for this article is the performance benefits of running a PSO algorithm in distributed environments vs non-distributed environments. As you can see above there has been plenty of research into crafting and testing distributed implementations of the PSO algorithm, but as far as I can find in my research there has been no comparison done of testing the PSO algorithm in distributed environments vs non-distributed environments and comparing the results.
-
-\subsection{Research Question}
+The gap identified for this article is the performance benefits of running a PSO algorithm in distributed environments vs centralised environments. As you can see above there has been plenty of research into crafting and testing distributed implementations of the PSO algorithm, but as far as I can find in my research there has been no comparison done of testing the PSO algorithm in distributed environments vs centralised environments and comparing the results.
+%Needs another paragraph or two.
 
 \section{Conclusion}
 
@@ -337,123 +349,156 @@ The gap identified for this article is the performance benefits of running a PSO
 % ============================================================= %
 \chapter{Experiment design and methodology}
 \section{Introduction}
+This chapter presents the design used to craft the experiment and the methodologies used to test the results from that experiment. The chapter will cover the aim of the research, the design and implementation of the experiment, data output design and will conclude with design conclusions. 
 \section{Aim of Research}
-\section{Design and Implementation overview}
-To start with then will be the implementation tasks. Firstly a PSO algorithm will need to be created using a simple fitness function. <<Fitness function choice and description>>. The PSO algorithm will then need to be adapted to run both synchronously and asynchronously on command.
-<<https://github.com/witek1902/pso-algorithm>>
+The aim of this paper is to find out if a point exists when scaling a PSO algorithm, that it becomes more efficient to run a a distributed algorithm instead of as a centralised algorithm. Increasing the number of active particles in a PSO algorithm can lead to a decline in performance, as for each iteration or epoch the machine must dedicate more and more power to recalculate particles positions and best evaluations. In a distributed model this burden can be divided across a number of machine, however in order to calculate global bests network communications must occur between machines in order to form the swarm. Network communications are inherently slower than local connection communications, however at high levels of active particles this speed decrease may be alleviated by the increased computational power available. 
 
-\subsection{Fitness Function overviews}
+\section{Hypothesis}
+\subsubsection{Null Hypothesis H\textsubscript{0}:}
+The time taken to find a stabilised result from using a distributed network of swarms never exceeds the time lost from the network communications needed to update swarms of each others presence and activities.
 
-\subsection{Non-Distributed Implementation}
-To start with will be the non-distributed implementation. The basic flow of the system will follow diagram 3.1. The algorithm will be run on a single machine, it will initialise and create a pre-selected number of swarms, each with a pre-selected number of particles. At this point the first iteration will begin for all swarms. The iteration will follow the same format as what was discussed in section 2.2.1. Each swarm will attempt to find its group best value. All swarms will then report the group best value. At this point the controller class, which will also be the class that instantiates the swarms, will try and calculate if a "settled" group best value has been found. What this means is that at a certain point the algorithm will settle on a particular value, the local minimum. This will be the optimum solution to the fitness function. When we say settle, we mean for a certain number of rounds the same group best value will be returned. So the system will need to record past values and compare against returned values to see if the same value has been returned for multiple iterations in a row. When this has occurred the domain controller will calculate the time to arriving at this optimal solution, and the number of iterations it took to find that value. Seeing as this algorithm has a degree of randomness to it this will need to be repeated many times and values will need to be averaged out across all runs. 
-The basic flow of the non-distributed implementation is shown below. 
+\subsubsection{Alternate Hypothesis H\textsubscript{1}:}
+The increased speed to solution time from using a distributed network of swarms exceeds the time lost from the network communications needed to update swarms of each others presence and activities once the number of particles and/or swarms has reached a sufficient level.
+
+\section{Design overview}
+In order to create the data required to prove/disprove the hypothesis two code base's will need to be created. One code base will need to handle generating the data required for a centralised PSO,and the other will need to generate the data from a distributed PSO implementation. Each will need to be able to run the same fitness functions, and operate nearly identically except for the distributed implementation which will need to call other PSO nodes to run swarms rather than running them on the local system. 
+The coded system will need to be run multiple times with the same inputs in order to account for the random element inherit in the PSO algorithm. After each run the system will need to output all generated data, and a data aggregator will need to sort, average and output all the data in order for it to be evaluated.
+
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.25]{Images/FlowDiagramNonDistibutedPSO.png}
-    \caption{Flow Diagram of Non Distributed Particle Swarm Algorithm}
-    \label{fig:Flow Diagram of Non Distributed Particle Swarm Algorithm}
+    \includegraphics[scale=0.6]{Images/ExperimentFlow.png}
+    \caption{Experiment Design Flow Chart}
+    \label{fig:Experiment Design Flow Chart}
+\end{figure}
+Figure 3.1 displays the flow of the experiment. First the environment type will be chosen, then the from that point the require fitness function will be chosen. To give greater breath to the results four different fitness functions will be used, with varying degrees of complexity. Once the fitness function has been chosen, the swarms and particles can be initialised with the function implementation. In the case of the centralised implementation this will be the same machine, in the decentralised implementation swarm nodes will be contacted and initialised. Once each environment type has completed its run and found a stable answer the implementations will return a data response object. 
+
+At this point the data aggregator will pull in the results from both implementations, with corresponding configuration details and generate a data output file useful for data comparison. This data file will be loaded into a data tabulation tool, whereby the results can be inspected and comparisons can be drawn up. At this point the study will be able to draw conclusions on whether the alternate hypothesis can be accepted or rejected.  
+
+\subsection{Centralised PSO Design}
+Expanding on the design overview, the centralised implementation will need to perform several steps in order to generate the required results set. Firstly it will initialise and create a parameterised number of swarms, each with a parameterised number of particles. At this point the first iteration will begin for all swarms. This will all occur on the one node. The iteration will follow the same format as what was discussed in section 2.2.1. Each swarm will attempt to find its group best value. All swarms will then report the group best value. At this point the controller class, which will also be the class that instantiates the swarms, will try and calculate if a "settled" group best value has been found. What this means is that at a certain point the algorithm will settle on a particular value, the global minimum. This will be the optimum solution to the fitness function. In this context settled means that for a certain number of iterations the same group best value will be returned. So the system will need to record past values and compare against returned values to see if the same value has been returned for multiple iterations in a row. When this has occurred the domain controller will calculate the time to arriving at this optimal solution, and the number of iterations it took to find that value. 
+The basic flow of Centralised implementation is shown below. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.4]{Images/FlowDiagramNonDistibutedPSO.png}
+    \caption{Flow Diagram of Centralised Particle Swarm Algorithm}
+    \label{fig:Flow Diagram of Centralised Particle Swarm Algorithm}
 \end{figure}
 
-\subsection{Distributed Implementation}
-In allot of ways the distributed implementation will function similarly to the non distributed implementation. The only functional difference will be that swarms will be logically separated across multiple machines. Where the non distributed implementation will be running a domain controller, and all swarm instances, the distributed implementation will feature a domain controller sitting on a single machine, calling out to other networked machines that will startup individual swarms with pre-programmed number of particles. Once an iteration ends the machine will communicate back to the domain controller, which will collect response from all active swarms, and check to see if the swarms have "settled" on the predefined optimum value. 
-If they have the domain should shut down the networked machines, gather the same values, ie. number of iterations, time to solution, but additionally for the distributed implementation we will be recording some additional figures, such as data exchanges in kbs, and network communication time. To do this we will setup a stopwatch like timer that starts when a request is sent to one of the network machines, and end the stopwatch when we receive a communication back. We can see an overview of how this system should work in figure 3.2.
-
+\subsection{Distributed PSO Design}
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.25]{Images/FlowDiagramDistibutedPSO.png}
+    \includegraphics[scale=0.4]{Images/FlowDiagramDistibutedPSO.png}
     \caption{Flow Diagram of Distributed Particle Swarm Algorithm}
     \label{fig:Flow Diagram of Distributed Particle Swarm Algorithm}
 \end{figure}
+As discussed in the overview, the distributed implementation will function similarly to the centralised implementation to keep differences in results to a minimum. The only functional difference will be that swarms will be logically separated across multiple machines in the distributed implementation. Where the centralised implementation will be running a domain controller, and all swarm instances, the distributed implementation will feature a domain controller on a single node, calling out to other networked nodes, that will startup and iterate individual swarms with a parameterised number of particles. Once an iteration ends the node will communicate back to the domain controller, which will collect responses from all active swarms, and check to see if the swarms have "settled" on the parameterised global minimum value. 
+If they have the domain will stop the nodes from running any further iterations, collect resulting values, ie. number of iterations and time to solution. Network time will be accounted for in the time to solution value.
 
-\section{Technology Research}
-% Language choice, frameworks etc.
-\subsection{Implementation Language}
-For the purpose of this study java will be used as the implementation language. Java was chosen due to the "deploy anywhere" model that allows for applications to be run on any operating system that supports a JVM(Java Virtual Machine). This will be a large benefit when the application is deployed to a distributed environment. Other advantages of using Java are its quite performant, has a large set of supported libraries and extensions, along with a very active community and a wide range of supporting tools and documentation. 
-Java is a mature language, with its initial 1.0 release in 1995. Since then its gone through multiple iterations and major version changes. It has been largely adopted by  large enterprise organisations due to its stability and feature rich ecosystem. Java's most recently released LTS(Long term support) version is Java 11, which will be in support till 2026. Later versions have been released, Java 15 having been released in September 2020,  but as of now Java 11 is the LTS version to use. 
+\section{Distributed environment}
+In order to create a distributed environment for the distributed implementation for this project a cloud provider was required. Using these cloud providers a virtual machine can be created and initialised, allowing the end user or developer to install custom software and applications. In this instance it allows the distributed implementation and centralised implementation to be deployed and run in a containerised environments. Snapshots where used to ensure consistency between the two implementations, and between the nodes of the distributed implementation. To facilitate this a number of different providers where considered, including AWS(Amazon Web Services), Google cloud and Digital Oceans. Each had a containerised virtual machine product that allowed the deployment of java applications, along with unique domain names and other internet connection utilities, however only one provider was required and Digital Ocean was chosen as the provider for this project. 
 
-\subsection{Distributed environment choice}
-For this project a distributed environment needed to be chosen, for both the distributed an non-distributed algorithm implementations. To deal with this I decided to use a containerised solution, one that would allow the deployment of java applications, and could facilitate the network communications between the instances. A number of different options where considered, including AWS(Amazon Web Services) EC2 instances, google cloud compute and Digital Oceans Droplets. All of these providers provided similar yet subtlety different products. Each had a virtual machine provider that allowed the deployment of java applications, along with unique domain names and other internet connection utilities. 
-\subsubsection{AWS Vs Google Vs Digital Ocean}
+\subsection{DigitalOcean}
+Digital Ocean is an Infrastructure as a Service(IaaS) platform for software developers. It allows developers to create containers in a simple and quick manner. To deploy Digital Ocean's IaaS environment, developers launch a virtual machine instance, which DigitalOcean calls a "droplet.". This is containerised, and a number of operating systems can be chosen to initialise the doplet. The OS's available to developer include: Ubuntu, CentOS, Debian, Fedora, CoreOS or FreeBSD. Digital ocean also offer the ability to choose the geographic region the droplet will be created in, and some other configuration options such as the amount of dedicated ram, number/quality of CPU, and the size of the on-board hard drive. Once initialised the developer may install their own custom software, or use some prepared packages from digital ocean to help speed along deployment. 
 
-\subsubsection{DigitalOcean}
-DigitalOcean is a cloud computing vendor that offers an Infrastructure as a Service (IaaS) platform for software developers. It has a simple set-up and very affordable in price. It allows developers to accomplish a task like spinning up a container(droplet) in a simple, quick and intuitive manner. To deploy DigitalOcean's Infrastructure as a Service (IaaS) environment, developers launch a private virtual machine (VM) instance, which DigitalOcean calls a "droplet." Developers choose the droplet's size, which geographical region and data center it will run in, and which Linux operating system it will use: Ubuntu, CentOS, Debian, Fedora, CoreOS or FreeBSD. 
-Developers use the DigitalOcean manage and monitor their droplets with a control panel and an open source API. The control panel allows developers to scale and rebuild droplets based on workload changes and perform backups and redirect network traffic between droplets. A feature called Team Accounts is available to establish resource-sharing between different DigitalOcean users.
-Digital ocean is a very affordable option among the cloud services providers, with basic containers costing at minimum 0.00744\$ an hour, working out at 5\$ a month. For that price you get a container with 1GB of RAM, 1 core CPU and 20GB's of storage.  
+Once the droplet has been created developers have the ability to monitor activity from their browser using digital oceans control panel. They also have the ability to update the domain name, and create a VPN(Virtual Private Network) for the droplet. Snapshots of the droplet can be taken at any time and used to recreate it if required. Digital ocean is a very affordable option among its peers, with basic containers costing at minimum 0.00744\$ an hour, working out at 5\$ a month. For that price digital ocean provide a container with one gigabyte of RAM, one core CPU and twenty gigabytes of on-board storage.
 
 \subsection{Container and Network Design}
-For this project we will be using a relatively straightforward container design. As mentioned in the previous section the distributed provider used for this project will be digital ocean. Within their ecosystem they define virtual environments as "droplets". Within this system our domain controller will be sitting on one droplet, and all subsequent droplets containing slave nodes running swarm instances. This design can be seen in figure 3.3. Slave swarm nodes will be configured with the domain name and port of the domain controller, which will allow them to call back to the domain controller at the end of each iteration. Slaves will not have knowledge of any other slave node, which will save on the network design complexity. The domain controller will know the network address's and ports of each slave. The domain controller will need these to issue a start/stop commands to slaves. 
-This configuration lends itself to being easier to setup and configure, but it has one flaw. The domain controller becomes 
+As previously mentioned the distributed provider used for this project will be digital ocean. Utilizing the containerisation service previously mentioned, a number of droplets will be created. Droplets will contain the implementation code in order to act as a domain controller and as a swarm node. However each node will only ever act as a domain controller or a swarm node. This design can be seen in figure \ref{fig:ContainerDesignOverview}. When running the distributed implementation the domain controller node will be called using the same request as the non-distributed method, however instead of an integer defining the number of swarms to be used, a list of IP address will be passed in. These IP address will correspond with the IP address's for the droplets running swarm nodes. The domain controller will then connect with each of these droplets, initialise the swarm node with the passed in configuration values, begin iterating and collecting response from all connected swarm nodes.
+
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.25]{Images/ContainerDesign.png}
+    \includegraphics[scale=0.4]{Images/ContainerDesign.png}
     \caption{Container Design Overview}
-    \label{fig:Container Design Overview}
+    \label{fig:ContainerDesignOverview}
 \end{figure}
 
-\subsection{Data output design}
-For the purpose of this project we will be recording the following variables for comparison. 
+This design does feature a core flaw in that it creates a central dependency in the domain controller, and if the domain controller is not sufficiently powerful enough it may also become a bottleneck. However in order to keep the results as consistent and in line with the centralised implementation, the domain controller will be the same droplet size as all other swarm nodes. 
+
+\section{Data Design and Data Capture Overview}
+For the purpose of this project the following variables will be recorded for comparison. 
 \begin{table}[H]
   \centering
     \begin{tabular}{| c | c | c |}
     \hline
      & \textbf{Variable Description} & \textbf{Data Type} \\ \hline
-    \textbf{Time} & Time Taken to get to solution & String \\ \hline
+    \textbf{Time} & Time taken to get to solution & Integer \\ \hline
     \textbf{N-Particles} & Number of active Particles  & Integer \\ \hline
     \textbf{N-Swarm} & Number of active Swarms. & Integer \\ \hline
-    \textbf{Environment-Type} & Distributed or Non-Distributed & String \\ \hline
-    \textbf{Generations} & Number of generations in any particular run & Integer \\ \hline
+    \textbf{Environment-Type} & Distributed or Centralised & String \\ \hline
+    \textbf{Iterations} & Total number of iterations to reach a solution & Integer \\ \hline
+    \textbf{finalGroupBest} & Final group best from all swarms & Integer \\ \hline
+    \textbf{averageBestX} & Average best X value across all swarms  & Integer \\ \hline
+    \textbf{averageBestY} & Average best Y value across all swarms & Integer \\ \hline
     \end{tabular}
   \caption{Data output variables}
   \label{tab:data_output_design}
 \end{table}
-As this project has a distributed network element, I decided to use json as my data ouput message type. An Example of the response can be seen below. This gives the overall response values, Environment, Time, Number of Particles total, the total number of swarms, total number of generations taken, and then a further breakdown, which gives more information on response values from each iteration. This response format will be the exact same for both distributed and non distributed formats. Using json allows me to easily create a uniform input/output requests between both implementation types, which will greatly simplify the coding process. 
-\begin{lstlisting}
-{
-	"Environment" : "NonDistributed",
-	"Time": "23400",
-	"NParticles": 100,
-	"NSwarms": 3,
-	"Generations":600,
-	"resultsBreakdown" :[
-		{
-			"Iteration":1,
-			"SwarmGBest": 0.8,
-			"timeTaken":300,
-			"SwarmBreakdown": [{
-				"SwarmId":1,
-				"NumberOfParticles":300,
-				"gBest": 0.7,
-				"machineIp":"192.168.0.1"
-			},{
-				"SwarmId":2,
-				"NumberOfParticles":300,
-				"gBest": 0.9
-				"machineIp":"192.168.0.1"
-			}]
-		}
-	]
+Starting with the first variable in table 3.1, the time variable, this will represent the amount of time it took the specific test to calculate an answer. This will be recorded in milliseconds, and it will be calculated by the domain controller, starting from the time it initialise the swarms in either the distributed implementation or the centralised implementation, and ending when either implementation arrives at a settled answer. The number of particles and swarms will be specified in the request when running the algorithm, but will also be recorded as part of the output for ease of comparison of results. Again environment type will be specified in the request, and recorded in the output for comparison. The Iterations variable will be used to record the number of iterations or epochs it took to reach a settled solution. This will also include the defined number of iterations for a result to be considered settled, which will inflate the total number of iterations, however as this affects all test runs it will have no significant impact on the final values. Final group best will record the final solution answer. All iterations should come to the same value, as the fitness functions used will contain only one global minimum, however it was recorded to see if there was any variation in the results between implementation types. Similarly with average best x and y all implementations types should conclude with the same values, but they where recorded to see if there was any variation.
+This data will be outputted to a JSON(JavaScript Object Notation) file at the end of each test run. The JSON file will be named in the following convention:
+
+\verb|<Function-Name>_<SwarmNumber>_<ParticleNumber>.results.json|
+
+
+\subsection{Data Aggregation}
+As mentioned in section 3.4 Design overview, due to the random element of the PSO algorithm, an average of results with the same parameters will need to be taken. Therefore multiple data output files will be generated for tests with the same inputs. In combination with multiple tests with varied numbers of particles and swarms, a large number of output files will be generated. To deal with this a data aggregation system will need to be created. This aggregation system will load in results with the same input variables, create an average values for the time to solution variable, number of iterations, finalGroupBest, and averageBestX/Y values. Values will then be outputted  into a single data file, with results from the distributed an centralised implementation being directly compared.
+
+\section{Design and Methodology Summary}
+This chapter presented an overview of the design and methodology used for this research. It discussed the overarching design of the experiment, with subsequent sections going into a more detailed design of specific elements of the research. Data output and capture was also discussed, with a data output design presented in some detail. 
+
+% Experiment Implementation details(The only fun chapter really) 
+% ============================================================= %
+\chapter{Experiment Implementation}
+
+\section{Introduction}
+This chapter will expand on the previous chapter and cover the implementation details in more depth. Coding examples will be provided for more clarity on how the two PSO implementations function. Additionally the test harness and data loader that where created for this experiment will be expanded upon and coded examples of each will be given.
+
+\section{PSO Implementations}
+
+\subsection{Java}
+For the purpose of this study java will be used as the implementation language. Java is a mature language, with its initial 1.0 release in 1995. Since then its gone through multiple iterations and major version changes. It has been largely adopted by large enterprise organisations due to its stability and feature rich ecosystem. Java was chosen due to the "deploy anywhere" model that allows for applications to be run on any operating system that supports a JVM(Java Virtual Machine). This will be a large benefit when the application is deployed to a distributed environment. Other advantages of using Java are its quite performant, has a large set of supported libraries and extensions, along with a very active community and a wide range of supporting tools and documentation.
+
+\subsection{Spring Boot}
+Spring Boot is an open source Java-based framework, that includes many utilities and libraries that allows a developer to quickly create a "production-grade"\footnote{https://spring.io/projects/spring-boot} application and is developed by Pivotal team. Spring boot is configured with an embedded servlet container, contains many auto-configurations features for ease of development, and provides plenty of additional tools for crafting microservices. 
+
+Spring boot was used in this experiment because of its mature and stable nature, and the ability to easily create REST(Representational state transfer) based microservices. Due to the distributed nature of the experiment, REST API calls where used to facilitate the messaging between swarm nodes and the domain controller. More on this will be discussed in the following sections. Spring boot allows developers to quickly configure REST API's, and is reasonable performant during runtime \footnote{https://spring.io/blog/2018/12/12/how-fast-is-spring}. Spring boot also allows developers to easily configure a number of different logging tools and frameworks to aid in debugging runtime errors and exceptions.
+
+\subsection{Centralised Implementation}
+Using spring boot a basic rest controller was created, whereby the swarm 
+\begin{lstlisting}[language=Java]
+@RestController
+public class CentralisedController {
+    @Autowired
+    private NonDistributedService nonDistributedService;
+
+    @PostMapping("/runSwarm")
+    public Response runNonDistributedSwarm(@RequestBody Request request) throws Exception {
+        return nonDistributedService.runMultiSwarm(request);
+    }
 }
 \end{lstlisting}
+\captionof{lstlisting}{Centralised Rest Controller}
 
-\section{Data Design and Data Capture Overview}
-\subsubsection{}
+\subsection{Distributed Implementation}
 
-\section{Qualitative Methods Overview}
-\section{Design Summary}
+\subsection{Fitness Functions overview}
+
+\section{Test Harness}
+
+\subsection{Postman/Newman and NodeJs}
+
+\subsection{Implementation}
+
+\section{Data aggregator implementation}
+
+\section{Implementation conclusion}
 
 
 % Results, evaluation and discussion chapter 
 % ============================================================= %
 \chapter{Results, evaluation and discussion}
-\section{Implementation Details}
+\section{Introduction}
 
-\subsection{Non-Distributed implementation}
-
-\subsection{Distributed implementation}
-
-\section{Results}
-
-\subsection{Non-distributed results}
+\subsection{Centralised results}
 
 \subsection{Distributed results}
 
@@ -485,6 +530,31 @@ As this project has a distributed network element, I decided to use json as my d
 
 % Optional appendices
 \appendix
-\chapter{Additional content}
+\chapter{}
+Listing A.1 shows and example data output produced for the booths fitness function from a distributed and centralised PSO implementation. 
+\begin{lstlisting}
+{
+	"finalGroupBest": 0.0,
+	"averageBestX": 1.0000000000000003,
+	"averageBestY": 3.0,
+	"iterations": 151,
+	"timeToSolution": 1303,
+	"resultsList": [
+		{
+			"swarmId": 0,
+			"machineIpAddress": "138.68.142.96",
+			"results": [
+				{
+					"step": 0,
+					"best": 20.288124656313526,
+					"bestPositionX": 0.0,
+					"bestPositionY": 0.0
+				}
+				.....
+		}
+	]
+}
+\end{lstlisting}
+\captionof{lstlisting}{Data output example}
 
 \end{document}

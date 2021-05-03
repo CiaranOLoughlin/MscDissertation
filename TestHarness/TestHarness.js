@@ -6,25 +6,24 @@ var particleIncrement = 1000;
 var particleStartNumber = 1000;
 var baseUrlStringsDistributed = ["138.68.142.96", "165.227.230.182", "165.227.238.19", "165.227.224.249", "165.227.230.17", "138.68.189.16", "138.68.157.95", "138.68.157.219", "138.68.187.214", "165.227.228.78"];
 var baseUrlStringsNonDistributed = "\"138.68.142.96\"";
-var functionNames = ["BOOTHS_FUNCTION", "BEALE", "EASOM"];
+var functionNames = ["BOOTHS_FUNCTION","BEALE", "EASOM"];
 //var functionNames = ["BOOTHS_FUNCTION"];
-//var functionNames = ["THREE_HUMP_CAMEL"];
 //var functionNames = ["BEALE"];
 var nonDistribEndpoint = "runSwarm";
 var distribEndpoint = "distributedImplementation";
 
 //nonDistributedRun();
-distributedRun();
+//distributedRun();
 //functionTesting();
-//functionTesting2();
+functionTesting2();
 
 async function functionTesting() {
-    var swarmNumber = 2;
+    var swarmNumber = 8;
     var particleNumber;
-    var baseString = '"138.68.142.96", "165.227.230.182"';
+    var baseString = '"138.68.142.96", "165.227.230.182", "165.227.238.19", "165.227.224.249", "165.227.230.17", "138.68.189.16", "138.68.157.95", "138.68.157.219"';
 
     for(var functionId = 0; functionId<= functionNames.length-1; functionId ++) {
-        for (particleNumber = 50000; particleNumber <= 500000; particleNumber += 50000) {
+        for (particleNumber = 12500; particleNumber <= 125000; particleNumber += 12500) {
             runNewmanCode("DISTRIB", functionNames[functionId], "remote_distrib", swarmNumber, particleNumber, baseString);
             var moveOntoNextTest = false;
             while (!moveOntoNextTest) {
@@ -37,10 +36,9 @@ async function functionTesting() {
 
 async function functionTesting2() {
     var swarmNumber = 2;
-    var particleNumber;
     var baseString = '"138.68.142.96"';
     for(var functionId = 0; functionId<= functionNames.length-1; functionId ++) {
-        for (particleNumber = 50000; particleNumber <= 500000; particleNumber += 50000) {
+        for (var particleNumber = 50000; particleNumber <= 500000; particleNumber += 50000) {
             runNewmanCode("NON_DISTRIB", functionNames[functionId], "Remote", swarmNumber, particleNumber, baseString);
             var moveOntoNextTest = false;
             while (!moveOntoNextTest) {
