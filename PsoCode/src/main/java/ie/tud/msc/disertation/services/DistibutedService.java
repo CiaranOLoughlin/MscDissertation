@@ -30,7 +30,7 @@ public class DistibutedService {
     private static final int TARGET_NUMBER_OF_EXACT_ANSWERS = 20;
     private static final int MAX_NUMBER_OF_STEPS = 100000;
 
-    public Response runDistributedCallingSystem(int numberOfParticles, List<String> baseUrls, ConfigVariables configVariables) {
+    public Response runDistributedCallingSystem(int numberOfParticles, List<String> baseUrls, ConfigVariables configVariables) throws Exception {
         Instant start = Instant.now();
         List<Boolean> successFlags = new ArrayList<>();
         int numberOfSwarms = baseUrls.size();
@@ -46,12 +46,12 @@ public class DistibutedService {
             throw new RuntimeException("Exception initialising swarms. Check logs.");
         }
 
-        boolean killSwitch = true;
+        boolean targetFound = false;
         int stepCount = 0;
         List<Double> settledList = new ArrayList<>();
         List<ResultList> multiSwarmResults = utils.createMultiSwarmResultSet(numberOfSwarms, baseUrls);
 
-        while(killSwitch) {
+        while(!targetFound) {
             double[] bestEvaluation = new double[numberOfSwarms];
             for(int swarmId = 0; swarmId<numberOfSwarms; swarmId++) {
                 DistributedRequest distributedRequest = new DistributedRequest();
@@ -76,11 +76,11 @@ public class DistibutedService {
 
                 if (settledList.size() == TARGET_NUMBER_OF_EXACT_ANSWERS) {
                     log.info("Found the same answer {} times. Returning from multi swarm method.", TARGET_NUMBER_OF_EXACT_ANSWERS);
-                    killSwitch = false;
+                    targetFound = true;
                 }
             }
             if(stepCount == MAX_NUMBER_OF_STEPS){
-                killSwitch =false;
+                targetFound = true;
             }
 
             stepCount++;
@@ -107,7 +107,7 @@ public class DistibutedService {
         }
     }
 
-    private Result callRunSwarm(int swarmId, String baseUrl, DistributedRequest distributedRequest) {
+    private Result callRunSwarm(int swarmId, String baseUrl, DistributedRequest distributedRequest) throws Exception {
         String fullUrl = "http://" + baseUrl + ":8080/swarm/runSwarmIteration";
         log.info("Calling endpoint {} to run swarm with id {}", fullUrl, swarmId);
         HttpEntity<DistributedRequest> request = new HttpEntity<>(distributedRequest);
@@ -116,7 +116,7 @@ public class DistibutedService {
             return responseEntity.getBody();
         } catch (Exception ex) {
             log.error("Exception thrown calling swarm with id {}, trying to initialise swarm", swarmId, ex);
-            return null;
+            throw new Exception("Error calling service to iterate swarm", ex);
         }
     }
 
@@ -127,6 +127,6 @@ public class DistibutedService {
 
 
     public Result runSwarmIteration(int stepCount) {
-        return utils.runSwarmIteration(initialisedSwarm, stepCount, Double.POSITIVE_INFINITY);
+        return utils.runSwarmIteration(initialisedSwarm, stepCount);
     }
 }

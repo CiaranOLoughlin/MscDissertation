@@ -28,6 +28,25 @@
 \setlength{\columnsep}{1cm}
 \renewcommand{\baselinestretch}{1.5}
 
+\lstdefinelanguage{JavaScript}{
+  keywords={break, case, catch, continue, debugger, default, delete, do, else, finally, for, function, if, in, instanceof, new, return, switch, this, throw, try, typeof, var, void, while, with},
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]',
+  morestring=[b]",
+  sensitive=true
+}
+
+\lstset{
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  frame=single,
+  numbers=left,
+  stepnumber=1,
+  breaklines=true,
+  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+}
+
 
 \begin{document}
 
@@ -116,6 +135,8 @@ of the Institute’s guidelines for ethics in research.
 \listoffigures
 
 \listoftables
+
+\lstlistoflistings
 
 \chapter*{List of Acronyms}
 \addcontentsline{toc}{chapter}{List of Acronyms}
@@ -463,40 +484,379 @@ Spring Boot is an open source Java-based framework, that includes many utilities
 Spring boot was used in this experiment because of its mature and stable nature, and the ability to easily create REST(Representational state transfer) based microservices. Due to the distributed nature of the experiment, REST API calls where used to facilitate the messaging between swarm nodes and the domain controller. More on this will be discussed in the following sections. Spring boot allows developers to quickly configure REST API's, and is reasonable performant during runtime \footnote{https://spring.io/blog/2018/12/12/how-fast-is-spring}. Spring boot also allows developers to easily configure a number of different logging tools and frameworks to aid in debugging runtime errors and exceptions.
 
 \subsection{Centralised Implementation}
-Using spring boot a basic rest controller was created, whereby the swarm 
-\begin{lstlisting}[language=Java]
+Using spring boot a basic rest controller was created, whereby the swarm could be initialised and run by calling one POST endpoint with a request object that contains the configurable values. Listing \ref{listing:CentralisedRestController} shows the coded example of this. 
+\begin{lstlisting}[basicstyle=\footnotesize, language=Java]
 @RestController
-public class CentralisedController {
+public class SwarmController {
     @Autowired
-    private NonDistributedService nonDistributedService;
+    private CentralisedService centralisedService;
 
     @PostMapping("/runSwarm")
-    public Response runNonDistributedSwarm(@RequestBody Request request) throws Exception {
-        return nonDistributedService.runMultiSwarm(request);
+    public Response runCentralisedSwarm(@RequestBody Request request) throws Exception {
+        return centralisedService.runSwarm(request);
     }
 }
 \end{lstlisting}
-\captionof{lstlisting}{Centralised Rest Controller}
+\captionof{lstlisting}{Centralised Rest Controller}\label{listing:CentralisedRestController}
+
+Once the endpoint in the rest controller receives a request, it will call out to a service method which will initialise the swarms and particles and begin the running the algorithm. The swarm and particle objects are abstracted out of the service class, so that the distributed service class can reuse the same methods, with some modifications. The service class also handles generating the response object with all necessary data points discussed in Chapter three. 
+
+\begin{lstlisting}[basicstyle=\footnotesize, language=Java]
+public Response runSwarm(Request request) throws Exception {
+    Instant start = Instant.now();
+    ...
+    List<Swarm> multiSwarm = new ArrayList<>();
+    ...
+    /* Initialize all swarms and particle with supplied configuration */
+    for(int swarmId = 0; swarmId<request.getNumberOfSwarms(); swarmId++) {
+        multiSwarm.add(utils.createSwarm(swarmId, request.getNumberOfParticles(), request.getConfigVariables()));
+    }
+
+    while(!targetFound) {
+        ...
+        for(int swarmId = 0; swarmId<request.getNumberOfSwarms(); swarmId++) {
+            Result result = utils.runSwarmIteration(multiSwarm.get(swarmId), stepCount);
+            ...
+        }
+        
+        /* Check if the same answer has been found multiple times */
+        for(int swarmId = 0; swarmId<request.getNumberOfSwarms(); 
+                swarmId++) {
+            if (settledList.size() == 0) {
+                settledList.add(bestEvaluation[swarmId]);
+            } else {
+                if (settledList.contains(bestEvaluation[swarmId])) {
+                    settledList.add(bestEvaluation[swarmId]);
+                } else {
+                    settledList = new ArrayList<>();
+                }
+            }
+
+            if (settledList.size() == TARGET_NUMBER_OF_EXACT_ANSWERS) {
+                TARGET_NUMBER_OF_EXACT_ANSWERS);
+                targetFound = true;
+            }
+        }
+
+        if(stepCount == MAX_NUMBER_OF_STEPS){
+            targetFound =true;
+        }
+
+        stepCount++;
+    }
+    Instant finish = Instant.now();
+    long timeElapsed = Duration.between(start, finish).toMillis();
+    ...
+}
+\end{lstlisting}
+\captionof{lstlisting}{Centralised Service Class}\label{listing:CentralisedServiceMethod}
+
+Listing \ref{listing:CentralisedServiceMethod} shows an extract of this service class. The service initialises all required swarms with configured particles.  Once this has been completed the code then begins to run the iteration section of the code. We can see in the extract this done through a while loop. In the while loop each iteration of all swarms is done through a for loop, once all swarms have completed their iteration their responses are compared and if the exact same global best has been found for the configured number of times(The \verb|TARGET_NUMBER_OF_EXACT_ANSWERS| variable) then the while loop ends. If the step count ie. the number of iterations reaches a certain threshold(The \verb|MAX_NUMBER_OF_STEPS| variable) the while loop is also terminated, to prevent the system from becoming trapped in an unending loop. This is assumed to be the worst case scenario, and is not expected to regularly happen. Once completed the time between entering the service class and completing the while loop is calculated. This is used to accurately calculate the time taken only for the PSO code to run, rather than the time to get a response from the rest controller.
+
+\subsubsection{Swarm Creation and Initialisation}
+Listing \ref{listing:SwarmCreation} has an extract of the swarm creation method. From the method createSwarm we can see how it creates a fitness function based on an enum("An enum type is a special data type that enables for a variable to be a set of predefined constants" \footnote{https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html}) passed in, allowing for the system to be extended with new fitness functions with a low amount of code change. Fitness function are defined in the request sent into the service, and it initialises the swarm with the number of particles and other configuration values.
+
+\begin{lstlisting}[basicstyle=\footnotesize, language=Java]
+public Swarm createSwarm(int swarmId, int numberOfParticles, ConfigVariables configVariables) throws Exception {
+    ...
+    if(configVariables.getFunctionType().equals(FunctionType.BOOTHS_FUNCTION)){
+        function = new BoothsFunction();
+    } 
+    ...
+    return new Swarm(numberOfParticles, configVariables, function);
+}
+\end{lstlisting}
+\captionof{lstlisting}{Swarm creation}\label{listing:SwarmCreation}
+
+Listing \ref{listing:SwarmInitialisation} shows how the swarm object is initialised. Best position and best evaluation are both set to the positive infinity, as this PSO is trying to find the global minimum of optimisation functions. If instead the object was to find global maximums this would need to be set to negative infinity. Inertia, cognitive and social parameters are set using configured values. Particles are initialised with the function defined in \ref{listing:SwarmCreation}
+
+\begin{lstlisting}[basicstyle=\footnotesize, language=Java]
+public Swarm (int numberOfParticles, ConfigVariables configVariables, Function function) {
+    double infinity = Double.POSITIVE_INFINITY;
+    bestPosition = new Vector(infinity, infinity, infinity);
+    bestEval = Double.POSITIVE_INFINITY;
+    this.particles = this.initialiseParticles(numberOfParticles, function);
+    this.inertia = configVariables.getInertia();
+    this.cognitive = configVariables.getInertia();
+    this.social = configVariables.getSocial();
+}
+\end{lstlisting}
+\captionof{lstlisting}{Swarm Initialisation}\label{listing:SwarmInitialisation}
+
+\subsubsection{Swarm Iteration}
+Each swarm iteration is triggered by the service class calling it. Within the swarm object there's a run swarm method, which iterates through each particle, updating its personal best and the global best value. Once that's completed the swarm updates all particles velocity and then moves each particle to its new position based on that velocity. A response object is created based on the iteration/epoch number including the global best value and best x/y values. Listing \ref{listing:SwarmIteration} shows this method in detail. 
+\begin{lstlisting}[basicstyle=\footnotesize, language=Java]
+public Result runSwarm(int epoch) {
+    for (Particle particle : particles) {
+        particle.updatePersonalBest();
+        updateGlobalBest(particle);
+    }
+
+    for (Particle particle : particles) {
+        updateVelocity(particle, this.inertia, this.cognitive, this.social);
+        particle.updatePosition();
+    }
+
+    return createResultObject(epoch);
+}
+\end{lstlisting}
+\captionof{lstlisting}{Swarm Iteration}\label{listing:SwarmIteration}
+
+The swarm, particle and vector models, along with the swarm velocity update function where adapted from  LazoCoder's Particle-Swarm-Optimization implementation. \footnote{\texttt{Particle-Swarm-Optimization} codebase: \url{https://github.com/LazoCoder/Particle-Swarm-Optimization}.}. The codebase was heavily adapted in order to support the mutliswarm and distributed implementations, along with the required output data. 
 
 \subsection{Distributed Implementation}
+Similar to the centralised implementation listing \ref{listing:DistributedRestController} shows the REST controller for the distributed implementation. Unlike the centralised implementation there are three endpoints. When running the algorithm from the beginning, the \textit{"/distributedImplementation"} endpoint is used. The node that this endpoint was hit with will become the domain controller, and will call out to all other swarm nodes established in the network.
+
+The other two endpoints present are used by the system to run the algorithm. The endpoint \textit{"/initialiseSwarm"} initialises the swarm with passed in variables. The code retains a copy of the swarm in its initialised state through the use of global variables. Then the domain controller will call the endpoint \textit{"/runSwarmIteration"} which will take the in in memory swarm object and run one iteration, returning the response values from it to the calling domain controller.
+
+\begin{lstlisting}[basicstyle=\footnotesize, language=Java]
+ @PostMapping("/initialiseSwarm")
+public Boolean initialiseSwarm(@RequestBody DistributedRequest request) throws Exception {
+    return distibutedService.setInitialisedSwarm(request.getSwarmId(), request.getNumberOfParticles(), request.getConfigVariables());
+}
+
+@PostMapping("/runSwarmIteration")
+public Result runSwarmIteration(@RequestBody DistributedRequest request) {
+    return distibutedService.runSwarmIteration(request.getEpoch());
+}
+
+@PostMapping("/distributedImplementation")
+public Response distributedImplementation(@RequestBody DistributedRequest request) {
+    return distibutedService.runDistributedCallingSystem(request.getNumberOfParticles(), request.getBaseUrls(), request.getConfigVariables());
+}
+\end{lstlisting}
+\captionof{lstlisting}{Distributed Rest Controller}\label{listing:DistributedRestController}
+
+Similar to the centralised implementation, the distributed rest controller calls out to a service class, which initiates all the swarms and runs the iteration steps. Listing \ref{listing:DistributedService} is an extract of that class. We can see that similar to the centralised service class, we start a timer at the beginning of the method, and then initialise the swarms. Once the initialisation is done the class enters the exact same while loop as the centralised service, however the core difference is the run swarm method instead calls out to the swarm nodes, instead of the local swarm classes. Again the while loop persists until a target number of the same answers has been recorded, or the step count(epoch/iteration number) exceeds a specified threshold. Once the while loop is complete the timer stops and the time to solution is recorded and a response object is formed. The response object for the distributed implementation is the exact same as the centralised implementation.  
+
+\begin{lstlisting}[basicstyle=\footnotesize, language=Java]
+public Response runDistributedCallingSystem(int numberOfParticles, List<String> baseUrls, ConfigVariables configVariables) {
+    Instant start = Instant.now();
+
+    for(int swarmId=0; swarmId < numberOfSwarms; swarmId++){
+        ...
+        callInitialiseSwarms(swarmId, baseUrls.get(swarmId), distributedRequest);
+    }
+
+    ...
+
+    while(!targetFound) {
+        double[] bestEvaluation = new double[numberOfSwarms];
+        for(int swarmId = 0; swarmId<numberOfSwarms; swarmId++) {
+            DistributedRequest distributedRequest = new DistributedRequest();
+            distributedRequest.setNumberOfParticles(numberOfParticles);
+            distributedRequest.setSwarmId(swarmId);
+            distributedRequest.setConfigVariables(configVariables);
+            Result result = callRunSwarm(swarmId, baseUrls.get(swarmId) ,distributedRequest);
+            multiSwarmResults.get(swarmId).getResults().add(result);
+            bestEvaluation[swarmId] = result.getBest();
+        }
+
+        for(int swarmId = 0; swarmId<numberOfSwarms; swarmId++) {
+            if (settledList.size() == 0) {
+                settledList.add(bestEvaluation[swarmId]);
+            } else {
+                if (settledList.contains(bestEvaluation[swarmId])) {
+                    settledList.add(bestEvaluation[swarmId]);
+                } else {
+                    settledList = new ArrayList<>();
+                }
+            }
+
+            if (settledList.size() == TARGET_NUMBER_OF_EXACT_ANSWERS) {
+                ...
+                targetFound = true;
+            }
+        }
+        if(stepCount == MAX_NUMBER_OF_STEPS){
+            targetFound =true;
+        }
+
+        stepCount++;
+    }
+
+    Instant finish = Instant.now();
+    long timeElapsed = Duration.between(start, finish).toMillis();
+
+    return utils.createResponse(multiSwarmResults, stepCount, 
+        timeElapsed, numberOfSwarms);
+}
+\end{lstlisting}
+\captionof{lstlisting}{Distributed Service Class}\label{listing:DistributedService}
+
+\subsubsection{Rest calls to swarm nodes}
+As seen in the above section, the service class calls out to an additional method to handle the REST call for initialising the swarms. Listing \ref{listing:DistributedInit} shows this method, and in we can see it calls out to the swarm node based on the passed in url. The endpoint, port and http protocol will be the same for all the nodes, so this is hardcoded in the method. The method passes the configuration details to the swarm node, and returns a Boolean to acknowledge whether the initialisation was successful. If any swarm was not successful the entire system aborts the run. This would be considered the worst case scenario, and is not expected to happen frequently. 
+
+\begin{lstlisting}[basicstyle=\footnotesize, language=Java]
+private Boolean callInitialiseSwarms(int swarmId, String baseUrl, DistributedRequest distributedRequest) {
+    String fullUrl = "http://" + baseUrl + ":8080/swarm/initialiseSwarm";
+    ...
+    HttpEntity<DistributedRequest> request = new HttpEntity<>(distributedRequest);
+    try {
+        ResponseEntity<Boolean> responseEntity = restTemplate.exchange(fullUrl, HttpMethod.POST, request, Boolean.class);
+        return responseEntity.getBody();
+    } catch (Exception ex) {
+        return false;
+    }
+}
+\end{lstlisting}
+\captionof{lstlisting}{Rest call to initialise swarm}\label{listing:DistributedInit}
+
+Listing \ref{listing:DistributedIteration} shows the code snippet for calling the swarm nodes to run a single iteration. Similarly to the initialise method it calls out to the swarm using a fixed url scheme, only amending the base url according to the swarm node. It does, however expect a response back that details the iteration number, time to solution, global best variable and best x and y variables. This response will be added to the general response object returned once the test run is complete. If an exception occurs during the test run the whole run is aborted, again this is a worst case scenario and is not expected to happen frequently. 
+
+\begin{lstlisting}[basicstyle=\footnotesize, language=Java]
+private Result callRunSwarm(int swarmId, String baseUrl, DistributedRequest distributedRequest) {
+    String fullUrl = "http://" + baseUrl + ":8080/swarm/runSwarmIteration";
+    log.info("Calling endpoint {} to run swarm with id {}", fullUrl, swarmId);
+    HttpEntity<DistributedRequest> request = new HttpEntity<>(distributedRequest);
+    try {
+        ResponseEntity<Result> responseEntity = restTemplate.exchange(fullUrl, HttpMethod.POST, request, Result.class);
+        return responseEntity.getBody();
+    } catch (Exception ex) {
+        ...
+        throw new Exception("Error calling service to iterate swarm", ex);
+    }
+}
+\end{lstlisting}
+\captionof{lstlisting}{Rest call to run swarm iteration}\label{listing:DistributedIteration}
+
+On the swarm nodes receiving end the distributed service has simple methods for using the exact same initialisation and iteration methods as the centralised implementation. As mentioned previously this was done in order to keep the PSO algorthim code differences between the two implementations to an absolute minimum. The only difference being that the swarm state is kept in memory once the method has completed, through the use of global variables. Listing \ref{listing:Distributedinitialisation} shows how this works for initialisation. The swarm is initialised and stored in memory through the global variable \textit{initialisedSwarm}. Each swarm iteration simply references this global variable and uses the same iteration command as the centralised implementation, shown in Listing \ref{listing:SwarmIteration}.
+
+\begin{lstlisting}[basicstyle=\footnotesize, language=Java]
+private Swarm initialisedSwarm;
+public boolean setInitialisedSwarm(int swarmId, int numberOfParticles, ConfigVariables         
+        configVariables) throws Exception {
+    this.initialisedSwarm = 
+        utils.createSwarm(swarmId, numberOfParticles, configVariables);
+    ....
+}
+\end{lstlisting}
+\captionof{lstlisting}{Distributed swarm initialisation}\label{listing:Distributedinitialisation}
 
 \subsection{Fitness Functions overview}
+In order to thoroughly test the hypothesis three fitness functions where chosen. The three functions ranged in computational complexity in order to give a greater breathe of results to draw conclusions from. All functions have only one global minimum, and all are 2 dimensional only. The first optimisation function chosen was the Easom function, equation \ref{eq:easom} represents this \footnote{\url{http://www.sfu.ca/~ssurjano/easom.html}}. The easom optimisation function has a global minimum value of -1 where X and Y are equal to $\pi$. 
+
+\begin{equation}\label{eq:easom}
+f(x,y) = −cos(x)cos(y) exp(−(x − \pi)^2−(y − \pi)^2)
+\end{equation}
+
+The next equation chosen was the beale function, equation \ref{eq:beale} represents this\footnote{\url{http://www.sfu.ca/~ssurjano/beale.html}}. Beale function has a global minimum value of 0 where X is equal to 3 and Y is equal to 0.5. 
+
+\begin{equation}\label{eq:beale}
+f(x, y) = (1.5-x+xy)^2+(2.25-x+xy^2)^2+(2.625-x+xy^3)^2
+\end{equation}
+
+The final equation chosen was Booths function, equation \ref{eq:booths} represents this \footnote{\url{http://www.sfu.ca/~ssurjano/booth.html}}. Booths function has a global minimum value of 0 where X is equal to 1 and Y is equal to 3. 
+
+\begin{equation}\label{eq:booths}
+f(x,y)=(x+2y-7)^2+(2x+y-5)^2
+\end{equation}
+
 
 \section{Test Harness}
+As described in chapter three, a test harness was created in order test the PSO implementations. Separating out the testing element from the code implementation allowed for greater flexibility in testing, allowing for tests to be updated independently of the code deployments to the containers within digital ocean. The test harness was designed to be flexible with its parameter's, along with being able to run multiple tests while saving the responses from each test run into a results folder.
 
 \subsection{Postman/Newman and NodeJs}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.4]{Images/PostmanTest.png}
+    \caption{Postman Test}
+    \label{fig:PostmanTest}
+\end{figure}
+In order to accomplish that goal postman was chosen to create the tests with, and newman was used as the test runner. Postman is a "scalable API testing tool that quickly integrates into CI/CD pipeline."\footnote{\url{https://www.guru99.com/postman-tutorial.html}}. Postman allows you to easily define a test for a remote API HTTP endpoint, specifying headers, body parameters etc, and display the response from that API. Postman comes equipped with plenty of development tools, for example it supports environment selection and parameters, allowing developers to substitute values based on the environment they have chosen. Figure \ref{fig:PostmanTest} shows an image of a postman test opened in the Postman application. In the figure it can be seen how the URL can be parameterised using the curly brackets operators \verb|{{Parameter_Name}}|, which can also be applied to body variables.  Postman can organise a series of tests into what it call a test collection, which can be exported to json files and saved locally. 
+
+
+Newman is the command line implementation of postman. Newman can take these JSON test collection and run them in a batch format. Newman runs on NodeJs, and is installed through NPM. NodeJs is a "an asynchronous event-driven JavaScript runtime, Node.js is designed to build scalable network applications." \footnote{\url{https://nodejs.org/en/about/}}. NPM(Node package manager) is a command line package manager tool that allows developers to download and install javascript libraries to their local development environment. While newman is mainly described as a CLI tool, it has a full API available for developers to use through node. Utilising this API allows for developers to create programs utilising postman test suites, while being able to programatically change parameters as required. 
 
 \subsection{Implementation}
+The test harness was split into two main methods for looping, one for the centralised run, and one for the distributed run, however they only differ in one aspect. When adding additional swarms the distributed implementation builds up a list of IP address corresponding to the swarm nodes. The centralised implementation only adds adds the required number swarms to the request. Listing \ref{listing:TestHarness} shows how this loop functions. The harness fist iterates through each fitness function ie, Beale, Booths and Easom function. Next the harness gradually increases the number of swarms, starting at minimum one swarm, and reaching a maximum of ten swarms. In swarm runs particles are also increased, starting from a minimum of 1000 particles and increasing to 100000 particles. The harness is configured to wait for each request to return a response object before moving onto the next request, to avoid overloading the droplets. Newman by default runs asynchronously, so the harness was configured to check every second if a file with the expected test name was written to the disk, and if it has move on, if not keep looping. 
+
+\begin{lstlisting}[basicstyle=\footnotesize, language=JavaScript]
+async function centralisedRun() {
+    for(var functionId = 0; functionId<= functionNames.length-1; functionId ++) {
+        for (var swarmNumber = 1; swarmNumber <= maxNumberSwarms; swarmNumber++) {
+            particleIncrement = 1000;
+            for (var particleNumber = particleStartNumber; particleNumber <= maxNumberParticles; particleNumber += particleIncrement) {
+                runNewmanCode("NON_DISTRIB", functionNames[functionId], "Remote", swarmNumber, particleNumber, baseUrlStringsNonDistributed, nonDistribEndpoint);
+                var moveOntoNextTest = false;
+                while (!moveOntoNextTest) {
+                    moveOntoNextTest = checkIfFilesExist("NON_DISTRIB", functionNames[functionId], swarmNumber, particleNumber);
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+            }
+        }
+    }
+}
+\end{lstlisting}
+\captionof{lstlisting}{Test Harness Main Loop}\label{listing:TestHarness}
+
+Listing \ref{listing:NewmanImpl} shows the newman node implementation code. The implementation allows for alot of reuse, by accepting parameters for changing the PSO implementation type, number of swarms/particles and fitness function type. The code uses the function name to load up the correct postman collection type, theres only one test in each collection. It will the use the function name, number of particles/swarms to write out the response to a file with those parameters in its name, allowing each response to be uniquely named, and avoiding overwriting the output file with each new response. 
+
+\begin{lstlisting}[basicstyle=\footnotesize, language=JavaScript]
+function runNewmanCode(envName, testCollectionName, environmentName, numberOfSwarms, numberOfParticles, baseUrlsSting, endpoint) {
+    newman.run({
+        collection: require('./Requests/' + testCollectionName + '.postman_collection.json'),
+        environment: require('./EnvVariables/' + environmentName + '.postman_environment.json'),
+        reporters: 'cli',
+        globalVar: [{ "key":"NumberOfSwarms", "value":numberOfSwarms }, {"key":"endpoint", "value": endpoint}, { "key":"NumberOfParticles", "value": numberOfParticles}, { "key":"BaseUrls", "value": baseUrlsSting}]
+    }).on('request', function (error, args) {
+        ...
+        else {
+            ...
+            fs.writeFile( dir + testCollectionName + "_" + numberOfSwarms + "_" + numberOfParticles + '.result.json', args.response.stream, function (error) {
+               ...
+            });
+        }
+    });
+}
+\end{lstlisting}
+\captionof{lstlisting}{Newman Implementation Code}\label{listing:NewmanImpl}
 
 \section{Data aggregator implementation}
+As mentioned in chapter three, multiple test iterations will be run to get averages from the results. In this experiment each function was tested three times for the two implementation types, with swarms increasing from one to ten, and particles in all swarms increasing from one thousand to one hundred thousand. In order to aggregate all the results a simple data aggregation tool was created. The data aggregator needed to load data from each of these three tests runs, get an average value for the following values; Number of iterations, Time to solution and final group best. 
+
+NodeJs was used to load the data and generate the average values, and the system writes the result out as a CSV(Comma separated value) file. Listing \ref{listing:DataAggregation} shows the code extract for this. In the listing we can see there is a set header string that will always be outputted at the beginning of the program, this is simple for ease of reading when the CSV is imported into excel. The program iterates through each function, swarm and particle number, and loads the JSON output file. Once it loads the result file for all three test runs, for both implementations it calculates the centralised averages and creates an output string in the CSV format. Once the centralised output string has been generated the program generates the same output string for the distributed implementation. The output string is built up for the same fitness function tests, and then outputted to the file system. 
+
+\begin{lstlisting}[basicstyle=\footnotesize, language=JavaScript]
+var outputString = "SWARM_NUMBER,PARTICLE_NUMBER,CENTRALISED_ITERATIONS,CENTRALISED_TIME_TO_SOLUTION,CENTRALISED_FINAL_GROUP_BEST,DISTRIBUTED_ITERATIONS,DISTRIBUTED_TIME_TO_SOLUTION,DISTRIBUTED_FINAL_GROUP_BEST\n";
+
+for (var swarmNumber = 1; swarmNumber <= numberOfSwarms; swarmNumber++) {
+    for (var particleNumber = 1000; particleNumber <= maxNumberParticles; particleNumber += particleIncrement) {
+        var fileUrlCentralised_RUN1 = './Results/NON_DISTRIB/RUN_1/' + functionName + '/' + functionName + '_' + swarmNumber + '_' + particleNumber + '.result.json';
+        ....
+        var fileUrlDistributed_RUN1 = './Results/DISTRIB/RUN_1/' + functionName + '/' + functionName + '_' + swarmNumber + '_' + particleNumber + '.result.json';
+        ....
+        let centralised_RUN1 = fs.readFileSync(fileUrlCentralised_RUN1);
+        ...
+        let centralised_data_RUN1 = JSON.parse(centralised_RUN1);
+        ...
+        var averageCentralisedIterations = Math.round((centralised_data_RUN1.iterations + centralised_data_RUN2.iterations + centralised_data_RUN3.iterations)/3);
+        var averageCentralisedTTS = Math.round((centralised_data_RUN1.timeToSolution + centralised_data_RUN2.timeToSolution + centralised_data_RUN3.timeToSolution)/3);
+        var averageCentralisedGbest = Math.round((centralised_data_RUN1.finalGroupBest + centralised_data_RUN2.finalGroupBest + centralised_data_RUN3.finalGroupBest)/3);
+        ...
+
+        outputString = outputString + swarmNumber  + "," + particleNumber + "," + averageCentralisedIterations + "," + averageCentralisedTTS + "," + averageCentralisedGbest + ",";
+        .....
+        /*
+        Generate the same output string for distributed test run data
+        */
+}
+/*
+Write outputString to file system. 
+*/
+\end{lstlisting}
+\captionof{lstlisting}{Data aggregation Implementation}\label{listing:DataAggregation}
 
 \section{Implementation conclusion}
+This chapter covered in depth how the PSO code implementations where developed, with a specific focus towards coded examples. Each implementation was discussed in detail, along with how the distributed implementation specifically calls swarm nodes on the network. The test harness and data aggregation tools where also covered in depth, with plenty of code extracts supplied. Test un implementation was discussed in some detail, the next chapter will cover this in more detail along with the results obtained from the tests.
+
 
 
 % Results, evaluation and discussion chapter 
 % ============================================================= %
 \chapter{Results, evaluation and discussion}
 \section{Introduction}
+This chapter discusses the results obtained from the 
 
 \subsection{Centralised results}
 

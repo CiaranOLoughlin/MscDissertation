@@ -12,40 +12,34 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class NonDistributedService {
+public class CentralisedService {
     private static final int TARGET_NUMBER_OF_EXACT_ANSWERS = 20;
     private static final int MAX_NUMBER_OF_STEPS = 10000;
 
     @Autowired
     Utils utils;
 
-    public Response runMultiSwarm(Request request) throws Exception {
+    public Response runSwarm(Request request) throws Exception {
         Instant start = Instant.now();
-        log.info("Running multi swarm method. Number of swarms: {}, Number of particles: {}", request.getNumberOfSwarms(), request.getNumberOfParticles());
+        log.info("Running centralised swarm method. Number of swarms: {}, Number of particles: {}", request.getNumberOfSwarms(), request.getNumberOfParticles());
         List<Swarm> multiSwarm = new ArrayList<>();
-        boolean killSwitch = true;
+        boolean targetFound = false;
         int stepCount = 0;
         List<Double> settledList = new ArrayList<>();
         List<ResultList> multiSwarmResults = utils.createMultiSwarmResultSet(request.getNumberOfSwarms(), request.getBaseUrls());
+        /* Initialize all swarms and particle with supplied configuration */
         for(int swarmId = 0; swarmId<request.getNumberOfSwarms(); swarmId++) {
             multiSwarm.add(utils.createSwarm(swarmId,
                     request.getNumberOfParticles(),
                     request.getConfigVariables()));
         }
 
-        while(killSwitch) {
-            double globalNeibhourhoodBest = Double.POSITIVE_INFINITY;
+        while(!targetFound) {
             double[] bestEvaluation = new double[request.getNumberOfSwarms()];
             for(int swarmId = 0; swarmId<request.getNumberOfSwarms(); swarmId++) {
-                Result result = utils.runSwarmIteration(multiSwarm.get(swarmId), stepCount, globalNeibhourhoodBest);
+                Result result = utils.runSwarmIteration(multiSwarm.get(swarmId), stepCount);
                 multiSwarmResults.get(swarmId).getResults().add(result);
                 bestEvaluation[swarmId] = result.getBest();
-            }
-
-            for(int evalId = 0; evalId<request.getNumberOfSwarms(); evalId++){
-                if(bestEvaluation[evalId] < globalNeibhourhoodBest) {
-                    globalNeibhourhoodBest = bestEvaluation[evalId];
-                }
             }
 
             for(int swarmId = 0; swarmId<request.getNumberOfSwarms(); swarmId++) {
@@ -61,12 +55,12 @@ public class NonDistributedService {
 
                 if (settledList.size() == TARGET_NUMBER_OF_EXACT_ANSWERS) {
                     log.info("Found the same answer {} times. Returning from multi swarm method.", TARGET_NUMBER_OF_EXACT_ANSWERS);
-                    killSwitch = false;
+                    targetFound = true;
                 }
             }
 
             if(stepCount == MAX_NUMBER_OF_STEPS){
-                killSwitch =false;
+                targetFound =true;
             }
 
             stepCount++;

@@ -19,7 +19,6 @@ for (var swarmNumber = 1; swarmNumber <= numberOfSwarms; swarmNumber++) {
             fs.existsSync(fileUrlDistributed_RUN1) && fs.existsSync(fileUrlDistributed_RUN2) && fs.existsSync(fileUrlDistributed_RUN3)) {
 
         } else {
-            //console.log("Error:" + functionName + "," + swarmNumber +  "," + particleNumber);
             doNothing=true;
         }
         if(!doNothing) {
