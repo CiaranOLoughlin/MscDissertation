@@ -22,6 +22,7 @@
 \usepackage{colortbl}
 \usepackage{multirow}
 \usepackage{listings}
+\usepackage[font=scriptsize]{caption}
 
 % document formatting
 \addtokomafont{labelinglabel}{\sffamily}
@@ -737,7 +738,7 @@ public boolean setInitialisedSwarm(int swarmId, int numberOfParticles, ConfigVar
 In order to thoroughly test the hypothesis three fitness functions where chosen. The three functions ranged in computational complexity in order to give a greater breathe of results to draw conclusions from. All functions have only one global minimum, and all are 2 dimensional only. The first optimisation function chosen was the Easom function, equation \ref{eq:easom} represents this \footnote{\url{http://www.sfu.ca/~ssurjano/easom.html}}. The easom optimisation function has a global minimum value of -1 where X and Y are equal to $\pi$. 
 
 \begin{equation}\label{eq:easom}
-f(x,y) = −cos(x)cos(y) exp(−(x − \pi)^2−(y − \pi)^2)
+f(x,y)=-cos(x)cos(y)exp(-(x-\pi)^2-(y-\pi)^2)
 \end{equation}
 
 The next equation chosen was the beale function, equation \ref{eq:beale} represents this\footnote{\url{http://www.sfu.ca/~ssurjano/beale.html}}. Beale function has a global minimum value of 0 where X is equal to 3 and Y is equal to 0.5. 
@@ -759,7 +760,7 @@ As described in chapter three, a test harness was created in order test the PSO 
 \subsection{Postman/Newman and NodeJs}
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.4]{Images/PostmanTest.png}
+    \includegraphics[scale=0.5]{Images/PostmanTest.png}
     \caption{Postman Test}
     \label{fig:PostmanTest}
 \end{figure}
@@ -856,19 +857,231 @@ This chapter covered in depth how the PSO code implementations where developed, 
 % ============================================================= %
 \chapter{Results, evaluation and discussion}
 \section{Introduction}
-This chapter discusses the results obtained from the 
+This chapter discusses the results obtained from the running the experiment described in detail in chapters three and four. Results from the centralised and distributed implementations will be presented and compared. As discussed in chapter three, several fitness functions where tested in this experiment, this chapter will expand on each for each implementation, with a primary focus on the time to solution value. This chapter will also evaluate the results, with some discussion taking place. 
 
-\subsection{Centralised results}
+\section{Centralised Testing and Results}
+Chapter three and four described the process of running the experiment in detail, in this section the results from those experiment runs will be presented. Each fitness function will be examined and results will be presented. All results are an average of three tests runs in order to compensate for the random element in PSO. Results where compared in a like for like manner, meaning when we compare the number of particles between a two swarm test and a ten swarm test, we are comparing the total number of particles in the test, not how many particles on each swarm. To further expand on that example, when comparing 100,000 particle tests, we look at there being 50,000 particles on each swarm in the two swarm test, and 10,000 particles on each swarm in the 10 swarm tests. This goes for both the centralised and distributed implementation tests. 
 
-\subsection{Distributed results}
+\subsection{Easom Function}
+The first function to cover is the centralised Easom test runs. Figure \ref{fig:Centralised_TTS_Easom_Results} shows the results when looking at the time to solution(TTS). In the results we can see that as the number of particles increases, the time to solution increases at a disproportionate rate. TTS for each swarm tends to increase at the same rate, except for the ten swarm test runs, where the TTS is slightly longer at the beginning, but increases at a much greater degree closer to the 1,000,000 particles tests.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.45]{Images/Graphs/CentralisedEasomTTS.png}
+    \caption{Centralised TTS Easom Results}
+    \label{fig:Centralised_TTS_Easom_Results}
+\end{figure}
+
+Figure \ref{fig:Centralised_Epoc_Easom_Results} shows the number of epochs or iterations taken to reach a solution for each of the swarms. All swarms display a downward trend in the number of iterations it takes to reach a solution, with the two and four swarms coming in at the lowest number of iterations at the maximum number of particles, one million particles. From the figure it can be seen that the number of iterations, while on a downward trend, can have a lot of variance as the particles increase in the tests, ie in the two swarm test the average iterations jumps from one hundred and fourteen iterations for six hundred thousand particles, to one hundred and twenty iterations for seven hundred thousand particles. As the swarms increase the variance between particles increments decreases. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.45]{Images/Graphs/CentralisedEasomEpoch.png}
+    \caption{Centralised Iterations Easom Results}
+    \label{fig:Centralised_Epoc_Easom_Results}
+\end{figure}
+
+\subsection{Booths Function}
+Looking at the Booths function results in figure \ref{fig:Centralised_TTS_Booths_Results} we see it closely follow the Easom function results, in that the general trend on the results looks to be at an exponential increase. Once again the the test runs where ten swarms are used show a slight increase in the TTS at lower numbers of particles, and a large increase towards the one million particles run.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.45]{Images/Graphs/CentralisedBoothsTTS.png}
+    \caption{Centralised TTS Booths Results}
+    \label{fig:Centralised_TTS_Booths_Results}
+\end{figure}
+
+Figure \ref{fig:Centralised_Epoc_Booths_Results} shows the results of the average iterations obtained by each swarm in testing. Similar to the Easom results the figure showcases a downward trend in the number of iterations as particles increase. Again the results show that the lower number of swarms, two and fours swarms, obtained a lower number of iterations at the higher number of particles. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.45]{Images/Graphs/CentralisedBoothsEpoch.png}
+    \caption{Centralised Iterations Booths Results}
+    \label{fig:Centralised_Epoc_Booths_Results}
+\end{figure}
+
+\subsection{Beale Function}
+
+Looking at the Beale TTS results in figure \ref{fig:Centralised_TTS_Beale_Results}, the same general trends from Easom and Booths function can be seen, with the general trend looking to be exponential. Again the higher number of swarms tends to end up with a higher TTS as particles increase. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.45]{Images/Graphs/CentralisedBealeTTS.png}
+    \caption{Centralised TTS Beale Results}
+    \label{fig:Centralised_TTS_Beale_Results}
+\end{figure}
+
+Figure \ref{fig:Centralised_Epoc_Beale_Results} shows the number of epochs each swarm took to get to a solution. Once again the general trend is that the number of epochs decreases with the increased number of particles, with some variations between the particle increments. Similar to Booths and Beale function the lower number of swarms, two and four swarms had, on average, a lower number of epochs to reach a solution.  
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.45]{Images/Graphs/CentralisedBealeEpoch.png}
+    \caption{Centralised Iterations Beale Results}
+    \label{fig:Centralised_Epoc_Beale_Results}
+\end{figure}
+
+\section{Distributed results}
+This section examines the results from the distributed implementation tests, using the same format as the centralised results section. Each fitness function's results will be presented the, primarily focusing on the TTS and number of Epochs to solution, along with a small amount of commentary on these results. 
+
+\subsection{Easom Function}
+Looking at the Easom function first, figure \ref{fig:Distributed_TTS_Easom_Results} shows the TTS results. TTS appears to linearly increase with the number of particles, across all number of swarms. At the upper end of the experiment bounds, with one million particles the two swarm tests appear to increase at a great rate than the four, eight and ten swarm tests, all of which appear to continue the same rate of increase in TTS. There are some variations in this linear increase, most notably the eight swarm tests show a large decrease in TTS at the eight hundred thousand particle point, but otherwise the variations are relatively minor. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.45]{Images/Graphs/DistributedEasomTTS.png}
+    \caption{Distributed TTS Easom Results}
+    \label{fig:Distributed_TTS_Easom_Results}
+\end{figure}
+
+Figure \ref{fig:Distributed_Epoc_Easom_Results} shows the number of epochs to solution results. From that we can see the general trend is a linear decrease, however it is a very slight decrease. The two swarm and ten swarm tests show the least amount of change in results, with the two swarm tests decreasing by two epochs from start to finish, and the ten swarm tests decreasing by three epochs. The eight and four swarm tests showed a greater deal of variance, with the eight and four swarm tests decreasing by nine iterations.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.45]{Images/Graphs/DistributedEasomEpoch.png}
+    \caption{Distributed Iterations Easom Results}
+    \label{fig:Distributed_Epoc_Easom_Results}
+\end{figure}
+
+\subsection{Booths Function}
+Looking next at booths function figure \ref{fig:Distributed_TTS_Booths_Results} shows the TTS results. Looking at the results shows similar trends as the Easom function results, with the overall trend appearing to be a linear increase in TTS as the number of particles increases. Two swarm tests once again appear to increase at a more aggressive rate towards the upper particle numbers. The ten swarm tests show an overall higher TTS than any other number of swarms. Eight swarm tests showed a large decrease in TTS at the eight hundred thousand particles interval, but resumes the same trend as lower particle numbers at the next interval. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.45]{Images/Graphs/DistributedBoothsTTS.png}
+    \caption{Distributed TTS Booths Results}
+    \label{fig:Distributed_TTS_Booths_Results}
+\end{figure}
+
+Figure \ref{fig:Distributed_Epoc_Booths_Results} shows the epochs to solution results. Unlike Easom results, the results are a bit more mixed. The two and ten swarm tests start off at a lower number of epochs at the beginning of the tests, with both starting at one hundred and eight iterations and ending at one hundred and seventeen iterations for ten swarms, and one hundred and fourteen iterations for the two swarm tests. Both the four and eight swarm tests show a more linear decrease, from start to finish, however both show a great deal of variance at various intervals in the testing. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.45]{Images/Graphs/DistributedBoothsEpoch.png}
+    \caption{Distributed Iterations Booths Results}
+    \label{fig:Distributed_Epoc_Booths_Results}
+\end{figure}
+
+\subsection{Beale Function}
+Finally, looking at figure \ref{fig:Distributed_TTS_Beale_Results} we can see the TTS results for the Beale function. Again this follows the same trends as Booths and Easom functions, however its even less erratic, with little to no variance in the swam tests. Again the two swarm test runs show signs of it increasing at more than a linear increase at the higher number of particles, nine hundred thousand and one million particle tests. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.45]{Images/Graphs/DistributedBealeTTS.png}
+    \caption{Distributed TTS Beale Results}
+    \label{fig:Distributed_TTS_Beale_Results}
+\end{figure}
+
+Looking at figure \ref{fig:Distributed_Epoc_Beale_Results} we can see that once again the results show a great deal of variance when it comes to the number of epochs to reach a solution. Similar to the Booths function results, swarms two and ten start at a much lower number of epochs, but at the higher number of particles have much more similar results to the eight and four swarm results. Eight and four swarm results show a more gradual and consistent decline in epochs as the number of particles increases. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.45]{Images/Graphs/DistributedBealeEpoch.png}
+    \caption{Distributed Iterations Beale Results}
+    \label{fig:Distributed_Epoc_Beale_Results}
+\end{figure}
 
 \section{Performance comparison}
+Figure \ref{fig:PerformanceComparisonEasomTTS} displays a direct comparison between the distributed implementation of the Easom TTS results, and the centralised TTS results. This clearly displays the general trend of the centralised implementation towards an exponential increase, whereas the distributed implementation more closely follows a linear increase in TTS.  
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.45]{Images/Graphs/PerformanceComparisonEasomTTS.png}
+    \caption{Performance Comparison Easom TTS}
+    \label{fig:PerformanceComparisonEasomTTS}
+\end{figure}
 
-\section{Network and other environment variations and impact}
+Looking more closely at figure \ref{fig:PerformanceComparisonEasomTTS} we can see the two implementation seem to diverge in TTS increase rate at around five hundred thousand particles. This is more or less the same case in both Beale, figure \ref{fig:PerformanceComparisonBoothsTTS} and Booths function figure \ref{fig:PerformanceComparisonBealeTTS}. In all three results it shows the distributed implementation increasing at a linear rate, while the centralised implementations begins to increase exponentially after the five hundred thousand particles tests. There are other patterns observable in all three results, including the same tendency for two swarm tests in the centralised implementation to increase at a more rapid rate than other number of swarms at the higher number of particles tests. 
 
-\section{Conclusions}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[b]{0.48\textwidth}
+    \includegraphics[width=\textwidth]{Images/Graphs/PerformanceComparisonBoothsTTS.png}
+    \caption{Booths TTS comparison}
+    \label{fig:PerformanceComparisonBoothsTTS}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.48\textwidth}
+    \includegraphics[width=\textwidth]{Images/Graphs/PerformanceComparisonBealeTTS.png}
+    \caption{Beale TTS comparison}
+    \label{fig:PerformanceComparisonBealeTTS}
+  \end{minipage}
+\end{figure}
 
-\subsection{Metrics}
+
+All three functions display a large increase in TTS at the early stage of the experiment, with one hundred thousand particles. Table \ref{tab:TTSOneHundredThousand} compares these results. In the case of the Beale function, on average, the distributed implementation was 50\% slower at finding a result. Easoms function had an even greater increase, taking 61\% more time to find a solution, and Booths function was even bigger again, with it taking 82\% more time in finding a solution. 
+
+% Table generated by Excel2LaTeX from sheet 'Test'
+\begin{table}[H]
+    \resizebox{\columnwidth}{!}{\begin{tabular}{|l|l|l|l|l|}
+    \hline
+          & \multicolumn{1}{l|}{\textbf{TTS - 2 Swarms}} & \multicolumn{1}{l|}{\textbf{TTS - 4 Swarms}} & \multicolumn{1}{l|}{\textbf{TTS - 8 Swarms}} & \multicolumn{1}{l|}{\textbf{TTS - 10 Swarms}} \\
+    \hline
+    \rowcolor[rgb]{ .851,  .882,  .949} \textbf{Beale -Centralised} & 4205  & 3842  & 4775  & 4417 \\
+    \hline
+    \rowcolor[rgb]{ .851,  .882,  .949} \textbf{Beale -Distributed} & 5291  & 5630  & 7153  & 7860 \\
+    \hline
+    \rowcolor[rgb]{ 1,  .949,  .8} \textbf{Booths -Centralised} & 2910  & 3243  & 3634  & 2805 \\
+    \hline
+    \rowcolor[rgb]{ 1,  .949,  .8} \textbf{Booths -Distributed} & 4331  & 4846  & 6197  & 7541 \\
+    \hline
+    \rowcolor[rgb]{ .886,  .937,  .855} \textbf{Easom -Centralised} & 2364  & 2297  & 2313  & 2388 \\
+    \hline
+    \rowcolor[rgb]{ .886,  .937,  .855} \textbf{Easom -Distributed} & 3551  & 3287  & 3925  & 4385 \\
+    \hline
+   \end{tabular}}%
+  \caption{TTS Results for 100,000 Particles}    
+  \label{tab:TTSOneHundredThousand}%
+\end{table}%
+
+Conversely there are some significant gains in TTS for the distributed implementation at the highest number of particles. Table \ref{tab:TTSOneMillion} compares these results for one million particle tests. For the Beale function it was found that the distributed implementation was on average 145\% faster than the centralised implementation. Similar performance gains where found with both Booths and Easom function, with Booths being 152\% faster, and Easom being 123\% faster. 
+
+
+\begin{table}[H]
+    \resizebox{\columnwidth}{!}{\begin{tabular}{|l|l|l|l|l|}
+    \hline
+    & \multicolumn{1}{l|}{\textbf{TTS - 2 Swarms}} & \multicolumn{1}{l|}{\textbf{TTS - 4 Swarms}} & \multicolumn{1}{l|}{\textbf{TTS - 8 Swarms}} & \multicolumn{1}{l|}{\textbf{TTS - 10 Swarms}} \\
+    \hline
+    \rowcolor[rgb]{ .851,  .882,  .949} \textbf{Beale -Centralised} & 112258 & 119800 & 112751 & 160899 \\
+    \hline
+    \rowcolor[rgb]{ .851,  .882,  .949} \textbf{Beale -Distribributed} & 56502 & 48906 & 49696 & 51248 \\
+    \hline
+    \rowcolor[rgb]{ 1,  .949,  .8} \textbf{Booths -Centralised} & 102709 & 103364 & 102856 & 131270 \\
+    \hline
+    \rowcolor[rgb]{ 1,  .949,  .8} \textbf{Booths -Distribributed} & 48322 & 39878 & 36861 & 49330 \\
+    \hline
+    \rowcolor[rgb]{ .886,  .937,  .855} \textbf{Easom -Centralised} & 50887 & 51263 & 52918 & 78160 \\
+    \hline
+    \rowcolor[rgb]{ .886,  .937,  .855} \textbf{Easom -Distribributed} & 29327 & 23923 & 24623 & 26300 \\ \hline
+   \end{tabular}}%
+  \caption{TTS Results for 1,000,000 Particles}    
+  \label{tab:TTSOneMillion}%
+\end{table}%
+
+When looking at the number of iterations between the two implementations there is very little difference the two. Looking at figures; \ref{fig:PerformanceComparisonEasomEpoch}, \ref{fig:PerformanceComparisonBoothsEpoch}, \ref{fig:PerformanceComparisonBealeEpoch}, we can see the same general trends in all three fitness functions. There is an overall gradual decline in iterations as particles increase, with some large variations, especially at the lower end of the particles. Overall the distributed implementations showed more variations than the centralised implementations. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.45]{Images/Graphs/PerformanceComparisonEasomEpoch.png}
+    \caption{Performance Comparison Easom Epoch}
+    \label{fig:PerformanceComparisonEasomEpoch}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[b]{0.48\textwidth}
+    \includegraphics[width=\textwidth]{Images/Graphs/PerformanceComparisonBoothsEpoch.png}
+    \caption{Booths Epoch comparison}
+    \label{fig:PerformanceComparisonBoothsEpoch}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.48\textwidth}
+    \includegraphics[width=\textwidth]{Images/Graphs/PerformanceComparisonBealeEpoch.png}
+    \caption{Beale Epoch comparison}
+    \label{fig:PerformanceComparisonBealeEpoch}
+  \end{minipage}
+\end{figure}
+
+\section{Conclusion}
+This chapter covered in-depth the results obtained from running the experiment described in chapter three and four. 
+
 
 
 
@@ -916,5 +1129,86 @@ Listing A.1 shows and example data output produced for the booths fitness functi
 }
 \end{lstlisting}
 \captionof{lstlisting}{Data output example}
+
+
+% Table generated by Excel2LaTeX from sheet 'Summary'
+\begin{table}[H]
+    \resizebox{\columnwidth}{!}{\begin{tabular}{|l|l|l|l|l|}
+    \hline
+    \textbf{Particle Number} & \textbf{TTS-2 Swarms} & \textbf{TTS-4 Swarms} & \textbf{TTS-8 Swarms} &\textbf{TTS-10 Swarms} \\ \hline
+    \textbf{100000} & 2364  & 2297  & 2313  & 2388 \\\hline
+    \textbf{200000} & 4578  & 4449  & 4313  & 4783 \\\hline
+    \textbf{300000} & 6681  & 6731  & 6694  & 8033 \\\hline
+    \textbf{400000} & 9776  & 9779  & 9749  & 11264 \\\hline
+    \textbf{500000} & 12875 & 13835 & 13176 & 16012 \\\hline
+    \textbf{600000} & 19400 & 18945 & 18825 & 21732 \\\hline
+    \textbf{700000} & 24188 & 23920 & 23905 & 27103 \\\hline
+    \textbf{800000} & 28344 & 27520 & 30373 & 33907 \\\hline
+    \textbf{900000} & 36510 & 38057 & 36939 & 47329 \\\hline
+    \textbf{1000000} & 50887 & 51263 & 52918 & 78160 \\\hline
+    \end{tabular}}%
+  \caption{Centralised Easom Results}    
+  \label{tab:CentralisedEasomTTS}%
+\end{table}%
+
+
+% Table generated by Excel2LaTeX from sheet 'Summary'
+\begin{table}[H]
+    \resizebox{\columnwidth}{!}{\begin{tabular}{|l|l|l|l|l|}
+    \hline
+    \textbf{Particle Number} & \textbf{TTS-2 Swarms} & \textbf{TTS-4 Swarms} & \textbf{TTS-8 Swarms} &\textbf{TTS-10 Swarms} \\ \hline
+    \textbf{100000} & 2910  & 3243  & 3634  & 2805 \\
+    \hline
+    \textbf{200000} & 6160  & 6802  & 6481  & 5986 \\
+    \hline
+    \textbf{300000} & 9857  & 10398 & 10425 & 10185 \\
+    \hline
+    \textbf{400000} & 14798 & 15180 & 15161 & 15400 \\
+    \hline
+    \textbf{500000} & 21596 & 21013 & 21246 & 23378 \\
+    \hline
+    \textbf{600000} & 34828 & 33524 & 34117 & 36270 \\
+    \hline
+    \textbf{700000} & 43639 & 42629 & 42271 & 45328 \\
+    \hline
+    \textbf{800000} & 52655 & 51940 & 55802 & 58774 \\
+    \hline
+    \textbf{900000} & 70949 & 70174 & 69936 & 83288 \\
+    \hline
+    \textbf{1000000} & 102709 & 103364 & 102856 & 131270 \\
+    \hline
+    \end{tabular}}%
+  \label{tab:addlabel}%
+  \caption{Add caption} 
+\end{table}%
+
+\begin{table}[H]
+    \resizebox{\columnwidth}{!}{\begin{tabular}{|l|l|l|l|l|}
+    \hline
+    \textbf{Particle Number} & \textbf{TTS-2 Swarms} & \textbf{TTS-4 Swarms} & \textbf{TTS-8 Swarms} &\textbf{TTS-10 Swarms} \\ \hline
+    \textbf{100000} & 4205  & 3842  & 4775  & 4417 \\
+   \hline
+    \textbf{200000} & 8828  & 8676  & 9276  & 9294 \\
+    \hline
+    \textbf{300000} & 14003 & 13934 & 14489 & 14964 \\
+    \hline
+    \textbf{400000} & 19742 & 19301 & 20336 & 22167 \\
+    \hline
+    \textbf{500000} & 27418 & 27981 & 27615 & 33411 \\
+    \hline
+    \textbf{600000} & 39291 & 40426 & 40594 & 45841 \\
+    \hline
+    \textbf{700000} & 52039 & 51825 & 49939 & 56124 \\
+    \hline
+    \textbf{800000} & 60327 & 61134 & 65653 & 70674 \\
+    \hline
+    \textbf{900000} & 78404 & 81726 & 79632 & 98879 \\
+    \hline
+    \textbf{1000000} & 112258 & 119800 & 112751 & 160899 \\
+    \hline
+    \end{tabular}}%
+  \label{tab:addlabel}%
+  \caption{Add caption} 
+\end{table}%
 
 \end{document}
