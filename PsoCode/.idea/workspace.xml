@@ -21,11 +21,6 @@
   <component name="ChangeListManager">
     <list default="true" id="b35f05f2-aa09-4dbf-9ca4-1e5b3b408a08" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ie/tud/msc/disertation/controllers/SwarmController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ie/tud/msc/disertation/controllers/SwarmController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ie/tud/msc/disertation/services/DistibutedService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ie/tud/msc/disertation/services/DistibutedService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ie/tud/msc/disertation/services/NonDistributedService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ie/tud/msc/disertation/services/CentralisedService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ie/tud/msc/disertation/services/Swarm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ie/tud/msc/disertation/services/Swarm.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ie/tud/msc/disertation/services/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ie/tud/msc/disertation/services/Utils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../TestHarness/Results/Results.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/../TestHarness/Results/Results.xlsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -142,9 +137,9 @@
     </configuration>
     <list>
       <item itemvalue="Application.CentralisedService" />
+      <item itemvalue="Application.Utils" />
       <item itemvalue="Maven.Build" />
       <item itemvalue="Spring Boot.DisertationApplication" />
-      <item itemvalue="Application.Utils" />
     </list>
     <recent_temporary>
       <list>
@@ -171,6 +166,7 @@
       <workItem from="1619028833573" duration="2516000" />
       <workItem from="1619786160898" duration="3179000" />
       <workItem from="1620152879172" duration="9902000" />
+      <workItem from="1622575439851" duration="613000" />
     </task>
     <servers />
   </component>

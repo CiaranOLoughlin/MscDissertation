@@ -96,7 +96,7 @@
 \chapter*{Declaration}
 \addcontentsline{toc}{chapter}{Declaration}
 I certify that this dissertation which I now submit for examination for the award of
-MSc in Computing (Stream), is entirely my own work and has not been taken
+MSc in Computing (TU060), is entirely my own work and has not been taken
 from the work of others save and to the extent that such work has been cited and
 acknowledged within the text of my work.
 \\
@@ -160,7 +160,7 @@ I would like to express my sincere thanks to my supervisor Dr. Edina Hatunic Web
     \textbf{TTS} & Time To Solution \\
     \textbf{CSV} & Comma Separated Values \\
     \textbf{JSON} & JavaScript Object Notation \\
-    
+    \textbf{TTSDTP} & Time To Solution Distributed Tipping Point \\
     \end{tabular}
 \end{table}
 
@@ -830,10 +830,11 @@ This chapter covered in depth how the PSO code implementations where developed, 
 \section{Introduction}
 This chapter discusses the results obtained from running the experiment described in detail in chapters three and four. Results from the centralised and distributed implementations will be presented and compared. As discussed in chapter three, several fitness functions where tested in this experiment, this chapter will expand on each for both implementations, with a primary focus on the time to solution value. This chapter will also evaluate the results, with some discussion taking place. 
 
-\section{Centralised Testing and Results}
+\section{Results}
+\subsection{Centralised Results}
 Chapter three and four described the process of running the experiment in detail, in this section the results from those experiment runs will be presented. Each fitness function will be examined and results will be presented. All results are an average of three tests runs in order to compensate for the random element in PSO. Results were compared in a like for like manner, meaning when we compare the number of particles between a two swarm test and a ten swarm test, we are comparing the total number of particles in the test, not how many particles on each swarm. To further expand on that example, when comparing 100,000 particle tests, we look at there being 50,000 particles on each swarm in the two swarm test, and 10,000 particles on each swarm in the 10 swarm tests. This goes for both the centralised and distributed implementation tests. 
 
-\subsection{Easom Function}
+\subsubsection{Easom Function}
 The first function to cover is the centralised Easom test runs. Figure \ref{fig:Centralised_TTS_Easom_Results} shows the results when looking at the time to solution(TTS). In the results we can see that as the number of particles increases, the time to solution increases at a disproportionate rate. TTS for each swarm tends to increase at the same rate, except for the ten swarm test runs, where the TTS is slightly longer at the beginning, but increases at a much greater degree closer to the 1,000,000 particles tests.
 
 \begin{figure}[H]
@@ -852,7 +853,7 @@ Figure \ref{fig:Centralised_Epoc_Easom_Results} shows the number of epochs or it
     \label{fig:Centralised_Epoc_Easom_Results}
 \end{figure}
 
-\subsection{Booths Function}
+\subsubsection{Booths Function}
 Looking at the Booths function results in figure \ref{fig:Centralised_TTS_Booths_Results} we see it closely follow the Easom function results, in that the general trend on the results looks to be at an exponential increase. Once again the the test runs where ten swarms are used show a slight increase in the TTS at lower numbers of particles, and a large increase towards the one million particles run.
 
 \begin{figure}[H]
@@ -871,7 +872,7 @@ Figure \ref{fig:Centralised_Epoc_Booths_Results} shows the results of the averag
     \label{fig:Centralised_Epoc_Booths_Results}
 \end{figure}
 
-\subsection{Beale Function}
+\subsubsection{Beale Function}
 
 Looking at the Beale TTS results in figure \ref{fig:Centralised_TTS_Beale_Results}, the same general trends from Easom and Booths function can be seen, with the general trend looking to be exponential. Again the higher number of swarms tends to end up with a higher TTS as particles increase. 
 
@@ -891,10 +892,10 @@ Figure \ref{fig:Centralised_Epoc_Beale_Results} shows the number of epochs each 
     \label{fig:Centralised_Epoc_Beale_Results}
 \end{figure}
 
-\section{Distributed results}
+\subsection{Distributed Results}
 This section examines the results from the distributed implementation tests, using the same format as the centralised results section. Each fitness function's results will be presented the, primarily focusing on the TTS and number of Epochs to solution, along with a small amount of commentary on these results. 
 
-\subsection{Easom Function}
+\subsubsection{Easom Function}
 Looking at the Easom function first, figure \ref{fig:Distributed_TTS_Easom_Results} shows the TTS results. TTS appears to linearly increase with the number of particles, across all number of swarms. At the upper end of the experiment bounds, with one million particles the two swarm tests appear to increase at a great rate than the four, eight and ten swarm tests, all of which appear to continue the same rate of increase in TTS. There are some variations in this linear increase, most notably the eight swarm tests show a large decrease in TTS at the 800,000 particle point, but otherwise the variations are relatively minor. 
 
 \begin{figure}[H]
@@ -913,7 +914,7 @@ Figure \ref{fig:Distributed_Epoc_Easom_Results} shows the number of epochs to so
     \label{fig:Distributed_Epoc_Easom_Results}
 \end{figure}
 
-\subsection{Booths Function}
+\subsubsection{Booths Function}
 Looking next at booths function figure \ref{fig:Distributed_TTS_Booths_Results} shows the TTS results. Looking at the results shows similar trends as the Easom function results, with the overall trend appearing to be a linear increase in TTS as the number of particles increases. Two swarm tests once again appear to increase at a more aggressive rate towards the upper particle numbers. The ten swarm tests show an overall higher TTS than any other number of swarms. Eight swarm tests showed a large decrease in TTS at the 800,000 particles interval, but resumes the same trend at the next interval. 
 
 \begin{figure}[H]
@@ -932,7 +933,7 @@ Figure \ref{fig:Distributed_Epoc_Booths_Results} shows the epochs to solution re
     \label{fig:Distributed_Epoc_Booths_Results}
 \end{figure}
 
-\subsection{Beale Function}
+\subsubsection{Beale Function}
 Finally, looking at figure \ref{fig:Distributed_TTS_Beale_Results} we can see the TTS results for the Beale function. Again this follows the same trends as Booths and Easom functions, however its even less erratic, with little to no variance in the swam tests. Again the two swarm test runs show signs of it increasing at more than a linear increase at the higher number of particles, 900,000 and 1,000,000 particle tests. 
 \begin{figure}[H]
     \centering
@@ -950,7 +951,7 @@ Looking at figure \ref{fig:Distributed_Epoc_Beale_Results} we can see that once 
     \label{fig:Distributed_Epoc_Beale_Results}
 \end{figure}
 
-\section{Performance comparison}
+\section{Results Evaluation}
 Figure \ref{fig:PerformanceComparisonEasomTTS} displays a direct comparison between the distributed implementation of the Easom TTS results, and the centralised TTS results. This clearly displays the general trend of the centralised implementation towards an exponential increase, whereas the distributed implementation more closely follows a linear increase in TTS.  
 \begin{figure}[H]
     \centering
@@ -959,25 +960,24 @@ Figure \ref{fig:PerformanceComparisonEasomTTS} displays a direct comparison betw
     \label{fig:PerformanceComparisonEasomTTS}
 \end{figure}
 
-Looking more closely at figure \ref{fig:PerformanceComparisonEasomTTS} we can see the two implementation seem to diverge in TTS increase rate at around five hundred thousand particles. This is more or less the same case in both Beale, figure \ref{fig:PerformanceComparisonBoothsTTS} and Booths function figure \ref{fig:PerformanceComparisonBealeTTS}. In all three results it shows the distributed implementation increasing at a linear rate, while the centralised implementations begins to increase exponentially after the five hundred thousand particles tests. There are other patterns observable in all three results, including the same tendency for two swarm tests in the centralised implementation to increase at a more rapid rate than other number of swarms at the higher number of particles tests. 
+Looking more closely at figure \ref{fig:PerformanceComparisonEasomTTS} we can see the two implementation seem to diverge in TTS increase rate at around 500,000 particles. This is more or less the same case in both Beale, figure \ref{fig:PerformanceComparisonBoothsTTS} and Booths function figure \ref{fig:PerformanceComparisonBealeTTS}. In the graphs we can see the red line denotes this tipping point, TTSDTP(Time To Solution Distributed Tipping Point). In all three results it shows the distributed implementation increasing at a linear rate, while the centralised implementations begins to increase exponentially after the five hundred thousand particles tests. There are other patterns observable in all three results, including the same tendency for two swarm tests in the centralised implementation to increase at a more rapid rate than other number of swarms at the higher number of particles tests. 
 
 \begin{figure}[H]
-  \centering
-  \begin{minipage}[b]{0.48\textwidth}
-    \includegraphics[width=\textwidth]{Images/Graphs/PerformanceComparisonBoothsTTS.png}
+    \centering
+    \includegraphics[scale=0.45]{Images/Graphs/PerformanceComparisonBoothsTTS.png}
     \caption{Booths TTS comparison}
     \label{fig:PerformanceComparisonBoothsTTS}
-  \end{minipage}
-  \hfill
-  \begin{minipage}[b]{0.48\textwidth}
-    \includegraphics[width=\textwidth]{Images/Graphs/PerformanceComparisonBealeTTS.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.45]{Images/Graphs/PerformanceComparisonBealeTTS.png}
     \caption{Beale TTS comparison}
     \label{fig:PerformanceComparisonBealeTTS}
-  \end{minipage}
 \end{figure}
 
 
-All three functions display a large increase in TTS at the early stage of the experiment, with one hundred thousand particles. Table \ref{tab:TTSOneHundredThousand} compares these results. In the case of the Beale function, on average, the distributed implementation was 50\% slower at finding a result. Easoms function had an even greater increase, taking 61\% more time to find a solution, and Booths function was even bigger again, with it taking 82\% more time in finding a solution. 
+All three functions display a large increase in TTS at the early stage of the experiment, with 100,000 particles. Table \ref{tab:TTSOneHundredThousand} compares these results. In the case of the Beale function, on average, the distributed implementation was 50\% slower at finding a result. Easoms function had an even greater increase, taking 61\% more time to find a solution, and Booths function was even bigger again, with it taking 82\% more time in finding a solution. 
 
 % Table generated by Excel2LaTeX from sheet 'Test'
 \begin{table}[H]
@@ -1002,7 +1002,7 @@ All three functions display a large increase in TTS at the early stage of the ex
   \label{tab:TTSOneHundredThousand}%
 \end{table}%
 
-Conversely there are some significant gains in TTS for the distributed implementation at the highest number of particles. Table \ref{tab:TTSOneMillion} compares these results for one million particle tests. For the Beale function it was found that the distributed implementation was on average 145\% faster than the centralised implementation. Similar performance gains where found with both Booths and Easom function, with Booths being 152\% faster, and Easom being 123\% faster. 
+Conversely there are some significant gains in TTS for the distributed implementation at the highest number of particles. Table \ref{tab:TTSOneMillion} compares these results for 1,000,000 particle tests. For the Beale function it was found that the distributed implementation was on average 145\% faster than the centralised implementation. Similar performance gains where found with both Booths and Easom function, with Booths being 152\% faster, and Easom being 123\% faster. 
 
 
 \begin{table}[H]
@@ -1026,7 +1026,7 @@ Conversely there are some significant gains in TTS for the distributed implement
   \label{tab:TTSOneMillion}%
 \end{table}%
 
-When looking at the number of iterations between the two implementations there is very little difference the two. Looking at figures; \ref{fig:PerformanceComparisonEasomEpoch}, \ref{fig:PerformanceComparisonBoothsEpoch}, \ref{fig:PerformanceComparisonBealeEpoch}, we can see the same general trends in all three fitness functions. There is an overall gradual decline in iterations as particles increase, with some large variations, especially at the lower end of the particles. Overall the distributed implementations showed more variations than the centralised implementations. 
+When looking at the number of iterations between the two implementations there is very little difference between the two. Looking at figures; \ref{fig:PerformanceComparisonEasomEpoch}, \ref{fig:PerformanceComparisonBoothsEpoch}, \ref{fig:PerformanceComparisonBealeEpoch}, we can see the same general trends in all three fitness functions. There is an overall gradual decline in iterations as particles increase, with some large variations, especially at the lower end of the particles. Overall the distributed implementations showed more variations than the centralised implementations. 
 
 \begin{figure}[H]
     \centering
@@ -1050,14 +1050,16 @@ When looking at the number of iterations between the two implementations there i
   \end{minipage}
 \end{figure}
 
-\section{Results Evaluation}
-From the performance comparison section we can see there is a clear point in all three fitness functions whereby the distributed implementation displays a better time to solution than the centralised implementation. Interestingly, for all three this occurs at more or less the same point. Once the number of particles across all swarms reaches 500,000 or greater, the distributed implementation begins to be a more efficient implementation than the centralised implementation. Once the particles reach one million all three functions had a greater than 100\% decreases in time to solution compared to the corresponding centralised tests.
+\section{Results Discussion}
+From the performance comparison section we can see there is a clear point in all three fitness functions whereby the distributed implementation displays a better TTS than the centralised implementation. Interestingly, TTSDTP occurs for all three functions at more or less the same point. Once the number of particles across all swarms reaches 500,000 or greater, the distributed implementation begins to be a more efficient implementation than the centralised implementation. Once the particles reach one million all three functions had a greater than 100\% decreases in TTS compared to the corresponding centralised tests.
 
 This clearly answers the research question, that there is in fact a point whereby it is more efficient to run a distributed PSO implementation over a centralised implementation. However, this must be caveated by the fact that these results are only a guide, a different fitness function may have a different efficiency point. Additionally different implementation languages, or PSO implementation methods may also have different efficiency points. 
 We can therefore conclude that the alternate hypothesis has been proven, and there is a point where a distributed implementation is more time efficient than a centralised implementation. 
 
 In terms of differences between the number of iterations taken before finding a solution, between the two implementations, this study found no difference between the distributed implementation and the centralised implementation. There was a noticeable decline in the number of iterations across both implementations as the number of particles increased, and this was evident across all three fitness functions. When looking at other resulting data points, such as the average x/y value, and final group best, this study found no difference between the implementation, and no differences as the number of particles increase. The number of particles used in this study can be considered overkill, as the number of particles required to correctly find a solution to any of the fitness functions was significantly lower than what was used in this study. However, as matching the trend seen in both implementations, the lower number of particles required much more iterations to find a "settled" solution. 
 
+\subsection{Strengths and Limitations of Results}
+The key strength to this research is the consistency of the results across the three fitness functions. All three fitness functions displayed a TTSDTP at around 500,000 particles, which gives a very clear answer to the research question. This also give a strong starting position for future research, as there is a clear answer as to whether the research should use a distributed or centralised model, based on the number of particles required for the research. The limitation within in this however, is that this research piece was only conducted with one specific environment. Using a machine with a greater level of RAM or a higher quality CPU may produce different results. Additionally different languages may have different TTSDTP's, even with the same fitness functions. Finally while these results strongly point toward 500,000 thousand particles as being the TTSDTP, this is really only relevant for functions with a similar complexity to the three chosen for this study. Using a more complex or significantly simpler fitness function will likely result it a different TTSDTP than the one found in this study. 
 
 \section{Conclusion}
 This chapter covered in-depth the results obtained from running the experiment described in chapters three and four. Each implementations results where presented, subdivided by the individual fitness function tested. Commentary was provided on these results, with some notable trends highlighted. 
@@ -1121,7 +1123,7 @@ Chapter two presented and cited many forms of robotics or simulated robotic PSO 
 % Optional appendices
 \appendix
 \chapter{Code Snippets}
-Listing A.1 shows and example data output produced for the booths fitness function from a distributed and centralised PSO implementation. 
+Listing \ref{listing:DataOutputExample} shows and example data output produced for the booths fitness function from a distributed and centralised PSO implementation. 
 \begin{lstlisting}
 {
 	"finalGroupBest": 0.0,
@@ -1141,6 +1143,9 @@ Listing A.1 shows and example data output produced for the booths fitness functi
 }
 \end{lstlisting}
 \captionof{lstlisting}{Data output example}
+\label{listing:DataOutputExample}
+
+Listing \ref{listing:DataAggregation} shows an extract of the data aggregation code. Code to retrieve the results from the file system, and aggregate and average them is visible. Code to output the resulting text string is omitted, but is a straightforward process of creating a text file using the variable \textit{outputString}.
 
 \begin{lstlisting}[basicstyle=\footnotesize, language=JavaScript]
 var outputString = "SWARM_NUMBER,PARTICLE_NUMBER,CENTRALISED_ITERATIONS,CENTRALISED_TIME_TO_SOLUTION,CENTRALISED_FINAL_GROUP_BEST,DISTRIBUTED_ITERATIONS,DISTRIBUTED_TIME_TO_SOLUTION,DISTRIBUTED_FINAL_GROUP_BEST\n";
@@ -1172,6 +1177,8 @@ Write outputString to file system.
 \end{lstlisting}
 \captionof{lstlisting}{Data aggregation Implementation}\label{listing:DataAggregation}
 
+Listing \ref{listing:NewmanImpl} shows an extract of the Newman API implementation code. Code to load the request file and environment variables can be seen, along with the code to write the result to the file system the format discussed in chapter three. 
+
 \begin{lstlisting}[basicstyle=\footnotesize, language=JavaScript]
 function runNewmanCode(envName, testCollectionName, environmentName, numberOfSwarms, numberOfParticles, baseUrlsSting, endpoint) {
     newman.run({
@@ -1192,6 +1199,7 @@ function runNewmanCode(envName, testCollectionName, environmentName, numberOfSwa
 \end{lstlisting}
 \captionof{lstlisting}{Newman Implementation Code}\label{listing:NewmanImpl}
 
+Listing \ref{listing:DistributedService} shows a partial extract of the distributed implementation service class. The swarm looping code can be seen, along with the stopping criteria code and the response formatting methods. 
 
 \begin{lstlisting}[basicstyle=\footnotesize, language=Java]
 public Response runDistributedCallingSystem(int numberOfParticles, List<String> baseUrls, ConfigVariables configVariables) {
@@ -1248,6 +1256,8 @@ public Response runDistributedCallingSystem(int numberOfParticles, List<String> 
 \end{lstlisting}
 \captionof{lstlisting}{Distributed Service Class}\label{listing:DistributedService}
 
+Listing \ref{listing:CentralisedServiceMethod} shows a partial extract of the centralised implementation service class. The swarm looping code can be seen, along with the stopping criteria code.
+
 \begin{lstlisting}[basicstyle=\footnotesize, language=Java]
 public Response runSwarm(Request request) throws Exception {
     Instant start = Instant.now();
@@ -1299,6 +1309,9 @@ public Response runSwarm(Request request) throws Exception {
 \captionof{lstlisting}{Centralised Service Class}\label{listing:CentralisedServiceMethod}
 
 \chapter{Data Results}
+
+Table \ref{tab:CentralisedEasomTTS} shows the full averaged result set for the centralised Easom function TTS. 
+
 % Table generated by Excel2LaTeX from sheet 'Summary'
 \begin{table}[H]
     \resizebox{\columnwidth}{!}{\begin{tabular}{|l|l|l|l|l|}
@@ -1319,6 +1332,7 @@ public Response runSwarm(Request request) throws Exception {
   \label{tab:CentralisedEasomTTS}%
 \end{table}%
 
+Table \ref{tab:CentralisedBoothsTTS} shows the full averaged result set for the centralised Booth's function TTS.
 
 % Table generated by Excel2LaTeX from sheet 'Summary'
 \begin{table}[H]
@@ -1346,9 +1360,11 @@ public Response runSwarm(Request request) throws Exception {
     \textbf{1000000} & 102709 & 103364 & 102856 & 131270 \\
     \hline
     \end{tabular}}%
-  \label{tab:CentralisedBoothsTTS}%
   \caption{Centralised Booths TTS} 
+  \label{tab:CentralisedBoothsTTS}%
 \end{table}%
+
+Table \ref{tab:CentralisedBealeTTS} shows the full averaged result set for the centralised Beale's function TTS.
 
 \begin{table}[H]
     \resizebox{\columnwidth}{!}{\begin{tabular}{|l|l|l|l|l|}
@@ -1375,10 +1391,11 @@ public Response runSwarm(Request request) throws Exception {
     \textbf{1000000} & 112258 & 119800 & 112751 & 160899 \\
     \hline
     \end{tabular}}%
-  \label{tab:CentralisedBealeTTS}%
   \caption{Centralised Beale TTS} 
+  \label{tab:CentralisedBealeTTS}%
 \end{table}%
 
+Table \ref{tab:DistributedEasomTTS} shows the full averaged result set for the distributed Easom's function TTS.
 
 % Table generated by Excel2LaTeX from sheet 'Summary'
 \begin{table}[H]
@@ -1406,9 +1423,11 @@ public Response runSwarm(Request request) throws Exception {
     1000000 & 29327 & 23923 & 24623 & 26300 \\
     \hline
     \end{tabular}}%
-  \label{tab:DistributedEasomTTS}%
   \caption{Distributed Easom TTS} 
+  \label{tab:DistributedEasomTTS}%
 \end{table}%
+
+Table \ref{tab:DistributedBothsTTS} shows the full averaged result set for the distributed Booth's function TTS.
 
 % Table generated by Excel2LaTeX from sheet 'Summary'
 \begin{table}[H]
@@ -1436,9 +1455,11 @@ public Response runSwarm(Request request) throws Exception {
     1000000 & 48322 & 39878 & 36861 & 49330 \\
     \hline
     \end{tabular}}%
-  \label{tab:DistributedBothsTTS}%
   \caption{Distributed Booths TTS} 
+  \label{tab:DistributedBothsTTS}%
 \end{table}%
+
+Table \ref{tab:DistributedBealeTTS} shows the full averaged result set for the distributed Beale's function TTS.
 
 % Table generated by Excel2LaTeX from sheet 'Summary'
 \begin{table}[H]
@@ -1466,12 +1487,8 @@ public Response runSwarm(Request request) throws Exception {
     1000000 & 56502 & 48906 & 49696 & 51248 \\
     \hline
     \end{tabular}}%
-  \label{tab:DistributedBealeTTS}%
   \caption{Distributed Beale TTS} 
+  \label{tab:DistributedBealeTTS}%
 \end{table}%
-
-
-
-
 
 \end{document}
